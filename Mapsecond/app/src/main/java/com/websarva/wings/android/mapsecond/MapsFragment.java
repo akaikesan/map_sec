@@ -286,8 +286,6 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Locati
     @Override
     public void onLocationChanged(Location location) {
 
-        Context contextOfFragment = getContext();
-
 
         Log.wtf(TAG, "onLocationChanged: ");
 

@@ -34,12 +34,13 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-
+import com.google.maps.android.ui.IconGenerator;
 
 
 import static android.content.Context.LOCATION_SERVICE;
@@ -111,19 +112,20 @@ public class pinnedmapsFragment extends Fragment implements OnMapReadyCallback, 
 
                 int maxofthis = data.getInt("MAXOFTHIS",0);
 
-                if(pinnumber < maxofthis){
+                if(pinnumber < maxofthis) {//つまり、pinnumber == maxofthis == 0のときはpinnumber は０のままmaxofthisが１になるとpinnumber = 1になる。
                     pinnumber++;
-                }else{
-                    pinnumber = 0;
+                }
+                else if(pinnumber != 0 && pinnumber == maxofthis){
+                    pinnumber = 1;
                 }
 
 
-                Log.wtf(TAG,"PinNumber:"+pinnumber);
-
-
-
-
-                Log.wtf(TAG, "onLocationChanged: ");
+                if(pinnumber != 0){
+                    Log.wtf(TAG,"this PinNumber:" + pinnumber);
+                }
+                else{
+                    Log.wtf(TAG,"you haven't registered yet");
+                }
 
                 latitude = data.getFloat("LAT" + pinnumber,(float) latitude);
                 longitude = data.getFloat("LONG" + pinnumber,(float) longitude);
@@ -136,8 +138,14 @@ public class pinnedmapsFragment extends Fragment implements OnMapReadyCallback, 
                     Log.wtf(TAG,"pin removed");
                 }
 
-                mMarker = mMap.addMarker(new MarkerOptions().position(sydney).
-                        title("Marker in your area"));
+                IconGenerator iconFactory = new IconGenerator(getContext());
+
+
+                MarkerOptions markerOptions = new MarkerOptions()
+                        .icon(BitmapDescriptorFactory.fromBitmap(iconFactory.makeIcon("PIN " + pinnumber)))
+                        .position(sydney)
+                        .anchor(iconFactory.getAnchorU(), iconFactory.getAnchorV());
+                mMarker = mMap.addMarker(markerOptions);
 
                 CameraPosition cameraPosition = new CameraPosition.Builder()
                         .target(sydney)      // Sets the center of the map to Mountain View
@@ -230,43 +238,54 @@ public class pinnedmapsFragment extends Fragment implements OnMapReadyCallback, 
             public void onMapLongClick(final LatLng longpushLocation) {
                 AlertDialog.Builder alertDialog=new AlertDialog.Builder(contextOfFragment);
 
-
                 // ダイアログの設定
                 //アイコン設定
-                alertDialog.setTitle("title");      //タイトル設定
-                alertDialog.setMessage("massage");  //内容(メッセージ)設定
+                alertDialog.setTitle("confirmation");      //タイトル設定
+                alertDialog.setMessage("pin");  //内容(メッセージ)設定
 
 
                 // OK(肯定的な)ボタンの設定
                 alertDialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
-                        // OKボタン押下時の処理
-                        SharedPreferences data = contextOfFragment.getSharedPreferences("DataSave", Context.MODE_PRIVATE);
 
+                        SharedPreferences data = contextOfFragment.getSharedPreferences("DataSave", Context.MODE_PRIVATE);
                         int maxofthis = data.getInt("MAXOFTHIS",0);
+
+                        // OKボタン押下時の処理
+
 
 
                         Log.wtf(TAG,"max number:" + maxofthis);
 
                         SharedPreferences.Editor editor = data.edit();
 
-                        if(maxofthis < 4){
-                            editor.putInt("MAXOFTHIS",maxofthis + 1);
-                        }
+                        int new_pinnum;
 
-                        if(maxofthis != 4) {
+                        if(maxofthis < 5){
+                            editor.putInt("MAXOFTHIS",maxofthis+1);
+                        }
+                        maxofthis++;
+                        //この時点で、 1 <= maxofthis <= 5　
+                        //ここからmaxofthisはピンの個数。
+                        if(maxofthis <= 5) {
                             editor.putFloat("LAT" + maxofthis, (float) longpushLocation.latitude);
                             editor.putFloat("LONG" + maxofthis, (float) longpushLocation.longitude);
-                        }
-                        else{
+                            new_pinnum = maxofthis;
+                        }else if(maxofthis == 6){//maxofthisが6以上のとき
                             editor.putFloat("LAT" + pinnumber, (float) longpushLocation.latitude);
                             editor.putFloat("LONG" + pinnumber, (float) longpushLocation.longitude);
+
+                            new_pinnum = pinnumber;
                         }
+                        else{
+                            new_pinnum=0;
+                        }
+
 
                         editor.apply();
 
 
-                        Toast.makeText(contextOfFragment,"saved",Toast.LENGTH_SHORT).show();
+                        Toast.makeText(contextOfFragment,"saved new PIN" + new_pinnum,Toast.LENGTH_SHORT).show();
 
 
 
@@ -405,37 +424,57 @@ public class pinnedmapsFragment extends Fragment implements OnMapReadyCallback, 
 
 
 
-        latitude = data.getFloat("LAT0",(float) location.getLatitude());
-        longitude = data.getFloat("LONG0",(float) location.getLongitude());
+        latitude = data.getFloat("LAT1", 400);
+        longitude = data.getFloat("LONG1",400);
 
 
 
         Log.wtf(TAG, "onLocationChanged: ");
 
+        LatLng sydney;
 
-            LatLng sydney = new LatLng(latitude, longitude);
+        String pintxt;
 
-            if (mMarker != null){
-                mMarker.remove();
+        if(latitude == 400 || longitude ==400){
 
-                Log.wtf(TAG,"pin removed");
-            }
+            sydney = new LatLng(location.getLatitude(), location.getLongitude());
+            pintxt = "Long press to PIN";
+        }
+        else{
+            sydney = new LatLng(latitude,longitude);
+            pintxt = "PIN 1";
+            pinnumber = 1;
+        }
 
-            mMarker = mMap.addMarker(new MarkerOptions().position(sydney).
-                    title("Marker in your area"));
+        if (mMarker != null){
+            mMarker.remove();
 
-            CameraPosition cameraPosition = new CameraPosition.Builder()
-                    .target(sydney)      // Sets the center of the map to Mountain View
-                    .zoom(16)                   // Sets the zoom
-                    .bearing(0)                // Sets the orientation of the camera to east
-                    .tilt(70)                   // Sets the tilt of the camera to 30 degrees
-                    .build();                   // Creates a CameraPosition from the builder
-            mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+            Log.wtf(TAG,"pin removed");
+        }
 
-            Log.wtf(TAG,"pin reloaded");
+        IconGenerator iconFactory = new IconGenerator(getContext());
 
 
-            mMap.getUiSettings().setScrollGesturesEnabled(true);
+
+
+        MarkerOptions markerOptions = new MarkerOptions()
+                .icon(BitmapDescriptorFactory.fromBitmap(iconFactory.makeIcon(pintxt)))
+                .position(sydney)
+                .anchor(iconFactory.getAnchorU(), iconFactory.getAnchorV());
+        mMarker = mMap.addMarker(markerOptions);
+
+        CameraPosition cameraPosition = new CameraPosition.Builder()
+                .target(sydney)      // Sets the center of the map to Mountain View
+                .zoom(16)                   // Sets the zoom
+                .bearing(0)                // Sets the orientation of the camera to east
+                .tilt(70)                   // Sets the tilt of the camera to 30 degrees
+                .build();                   // Creates a CameraPosition from the builder
+        mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+
+        Log.wtf(TAG,"pin reloaded");
+
+
+        mMap.getUiSettings().setScrollGesturesEnabled(true);
 
 
 

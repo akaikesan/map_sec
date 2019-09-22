@@ -9,23 +9,17 @@ import java.io.PrintStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Locale;
 
-public class SendCommentBackGround {
+class SendCommentBackGround {
 
     private String sendData;
 
 
+    SendCommentBackGround(String comment, double latitude,double longitude) {
 
-
-
-
-    SendCommentBackGround(String comment, double latitude,double longitude) throws URISyntaxException {
         this.sendData = String.format("{ \"content\":\"%s\",\"latitude\":\"" + latitude + "\",\"longitude\":\"" + longitude + "\"}", comment);
-
-
 
 
         System.out.println(sendData);
@@ -35,7 +29,7 @@ public class SendCommentBackGround {
 
 
 
-    public boolean postPOST() throws JSONException {
+    boolean postPOST() throws JSONException {
 
         JSONObject responseJsonObject = new JSONObject(sendData);
 

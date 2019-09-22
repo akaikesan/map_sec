@@ -30,15 +30,6 @@ class UserLoginTask extends AsyncTask<Void, Void, Boolean> {
     protected Boolean doInBackground(Void... params) {
 
 
-
-
-
-
-
-
-
-
-
         try{
             Log.wtf("omg", "hahahahah2");
 
