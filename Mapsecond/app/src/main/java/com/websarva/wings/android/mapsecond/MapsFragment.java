@@ -43,7 +43,8 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Locati
 
     private Marker mMarker = null;
 
-    Context contextOfFragment = getContext();  //気が向いたらデバッグせよ
+    private boolean is_end;
+
 
     double latitude = 0, longitude = 0;
 
@@ -61,6 +62,8 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Locati
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+
+        is_end = false;
 
         super.onCreate(savedInstanceState);
 
@@ -214,7 +217,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Locati
             // 使用が許可された
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 Log.wtf("debug", "checkSelfPermission true");
-                Toast toast = Toast.makeText(contextOfFragment,
+                Toast toast = Toast.makeText(getContext(),
                         "位置情報解禁！", Toast.LENGTH_SHORT);
                 toast.show();
 
@@ -286,47 +289,51 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Locati
     @Override
     public void onLocationChanged(Location location) {
 
+        if(!is_end) {
 
-        Log.wtf(TAG, "onLocationChanged: ");
 
-        latitude = location.getLatitude();
+            Log.wtf(TAG, "onLocationChanged: ");
 
-        longitude = location.getLongitude();
+            latitude = location.getLatitude();
 
-        LatLng sydney = new LatLng(latitude, longitude);
+            longitude = location.getLongitude();
 
-        if (mMarker != null){
-            mMarker.remove();
+            LatLng sydney = new LatLng(latitude, longitude);
 
-            Log.wtf(TAG,"pin removed");
+            if (mMarker != null) {
+                mMarker.remove();
+
+                Log.wtf("onLocationchanged", "pin removed");
+            } else {
+                Log.wtf("onLocationchanged", "pin is null");
+            }
+
+
+            Activity activity = getActivity();
+
+
+            IconGenerator iconFactory = new IconGenerator(activity);
+
+
+            MarkerOptions markerOptions = new MarkerOptions()
+                    .icon(BitmapDescriptorFactory.fromBitmap(iconFactory.makeIcon("You're here!")))
+                    .position(sydney)
+                    .anchor(iconFactory.getAnchorU(), iconFactory.getAnchorV());
+            mMarker = mMap.addMarker(markerOptions);
+
+
+            CameraPosition cameraPosition = new CameraPosition.Builder()
+                    .target(sydney)      // Sets the center of the map to Mountain View
+                    .zoom(16)                   // Sets the zoom
+                    .bearing(0)                // Sets the orientation of the camera to east
+                    .tilt(70)                   // Sets the tilt of the camera to 30 degrees
+                    .build();                   // Creates a CameraPosition from the builder
+            mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+
+            Log.wtf(TAG, "pin reloaded");
+
+
         }
-
-
-        IconGenerator iconFactory = new IconGenerator(getContext());
-
-
-        MarkerOptions markerOptions = new MarkerOptions()
-                .icon(BitmapDescriptorFactory.fromBitmap(iconFactory.makeIcon("You're here!")))
-                .position(sydney)
-                .anchor(iconFactory.getAnchorU(), iconFactory.getAnchorV());
-        mMarker = mMap.addMarker(markerOptions);
-
-
-
-
-
-        CameraPosition cameraPosition = new CameraPosition.Builder()
-                .target(sydney)      // Sets the center of the map to Mountain View
-                .zoom(16)                   // Sets the zoom
-                .bearing(0)                // Sets the orientation of the camera to east
-                .tilt(70)                   // Sets the tilt of the camera to 30 degrees
-                .build();                   // Creates a CameraPosition from the builder
-        mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
-
-        Log.wtf(TAG,"pin reloaded");
-
-
-
     }
 
     @Override
@@ -338,7 +345,17 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Locati
     public void onProviderDisabled(String provider) {
 
     }
+    @Override
+    public void onDestroy(){
+        super.onDestroy();
 
+        is_end = true;
+
+
+
+        Log.wtf("onDestroy","MapsFragment is finished");
+
+    }
 
 
 

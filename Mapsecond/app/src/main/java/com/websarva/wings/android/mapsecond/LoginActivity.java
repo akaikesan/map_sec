@@ -1,9 +1,12 @@
 package com.websarva.wings.android.mapsecond;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.multidex.MultiDex;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
+import android.util.Base64;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -12,6 +15,16 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+
+import javax.crypto.BadPaddingException;
+import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
+import javax.crypto.spec.SecretKeySpec;
+
 /**
  * A login screen that offers login via email/password.
  */
@@ -20,48 +33,84 @@ public class LoginActivity extends AppCompatActivity {
 
 
 
+
+
+    SharedPreferences data;
+    boolean is_logined_device;
+
+
     private UserLoginTask mAuthTask = null;
 
     // UI references.
     private AutoCompleteTextView mEmailView;
     private EditText mPasswordView;
 
-
-
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        MultiDex.install(this);
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
-        // Set up the login form.
-        mEmailView = findViewById(R.id.email);
+        data = this.getSharedPreferences("DataSave", Context.MODE_PRIVATE);
+        is_logined_device = data.getBoolean("Is_Logined_device", false);
+
+        MultiDex.install(this);
+        if(is_logined_device){
+
+            String up = "";
+            SecretKeySpec keySpec = new SecretKeySpec("abcdefg098765432".getBytes(), "AES"); // キーファイル生成 暗号化で使った文字列と同様にする
+            Cipher cipher = null;
+            String email = data.getString("EM",null);
+            String pass = data.getString("PW",null);
+            try{
+
+                cipher = Cipher.getInstance("AES");
+                cipher.init(Cipher.DECRYPT_MODE, keySpec);
+                byte[] decByte = Base64.decode(pass, Base64.DEFAULT); // byte配列にデコード
+                byte[] decrypted = cipher.doFinal(decByte); // 複合化
+                up = new String(decrypted); // Stringに変換
+            } catch (NoSuchAlgorithmException e) {
+                e.printStackTrace();
+            } catch (InvalidKeyException e) {
+                e.printStackTrace();
+            } catch (NoSuchPaddingException e) {
+                e.printStackTrace();
+            } catch (BadPaddingException e) {
+                e.printStackTrace();
+            } catch (IllegalBlockSizeException e) {
+                e.printStackTrace();
+            }
 
 
-        mPasswordView = findViewById(R.id.password);
-        mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
+            mAuthTask = new UserLoginTask(email, up,this);
+            mAuthTask.execute((Void) null);
+        }else {
 
-                //
-                if (id == EditorInfo.IME_ACTION_DONE || id == EditorInfo.IME_NULL) {
-                    attemptLogin();//start!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!t
-                    return true;
+            setContentView(R.layout.activity_login);
+            // Set up the login form.
+            mEmailView = findViewById(R.id.email);
+
+
+            mPasswordView = findViewById(R.id.password);
+            mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+                @Override
+                public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
+
+                    //
+                    if (id == EditorInfo.IME_ACTION_DONE || id == EditorInfo.IME_NULL) {
+                        attemptLogin();//start!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!t
+                        return true;
+                    }
+                    return false;
                 }
-                return false;
-            }
-        });
+            });
 
-        Button mEmailSignInButton = findViewById(R.id.email_sign_in_button);
-        mEmailSignInButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                attemptLogin();
-            }
-        });
+            Button mEmailSignInButton = findViewById(R.id.email_sign_in_button);
+            mEmailSignInButton.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    attemptLogin();
+                }
+            });
 
-
+        }
     }
     //mayRequestContacts -> 107
 
