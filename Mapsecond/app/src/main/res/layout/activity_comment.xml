@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#FFFFFF"
+    android:id="@+id/commentFragment">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/btCancel"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="left"
+            android:background="#FFFFFF"
+            android:text="@string/bt_cancel" />
+
+        <Button
+            android:id="@+id/btContribution"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="right"
+            android:background="#FFFFFF"
+            android:text="@string/bt_contribution"
+            android:textColor="#87CEFA" />
+
+    </FrameLayout>
+
+    <FrameLayout
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
+
+        <ImageButton
+            android:id="@+id/ibtIcon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+
+        <EditText
+            android:id="@+id/etComment"
+            android:layout_width="340dp"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="70dp"
+            android:gravity="top|left"
+            android:inputType="textMultiLine"
+            android:hint="@string/tv_comment"
+            android:textSize="20sp"
+            android:maxLines="6"
+            android:background="#00000000"
+            android:maxLength="255">
+            <requestFocus/>
+        </EditText>
+
+    </FrameLayout>
+
+</LinearLayout>
