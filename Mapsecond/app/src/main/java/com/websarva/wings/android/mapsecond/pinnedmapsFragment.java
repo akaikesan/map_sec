@@ -64,7 +64,10 @@ public class pinnedmapsFragment extends Fragment implements OnMapReadyCallback, 
     private String TAG = "Verbose";
 
     public void GPSStatus() {
-        locationManager = (LocationManager) getContext().getSystemService(Context.LOCATION_SERVICE);
+        if(getContext() != null){
+
+            locationManager = (LocationManager) getContext().getSystemService(Context.LOCATION_SERVICE);
+        }
         GpsStatus = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
     }
 
@@ -183,10 +186,6 @@ public class pinnedmapsFragment extends Fragment implements OnMapReadyCallback, 
 
             mapFragment.getMapAsync(this);
 
-        } else {
-
-
-
         }
     }
 
@@ -219,6 +218,8 @@ public class pinnedmapsFragment extends Fragment implements OnMapReadyCallback, 
         try {
             // Customise the styling of the base map using a JSON object defined
             // in a raw resource file.
+
+            assert contextOfFragment != null;
             boolean success = googleMap.setMapStyle(
                     MapStyleOptions.loadRawResourceStyle(contextOfFragment
                             , R.raw.style_json));
@@ -320,10 +321,12 @@ public class pinnedmapsFragment extends Fragment implements OnMapReadyCallback, 
 
         Context contextOfFragment = getContext();
 
+        assert contextOfFragment != null;
         if (ContextCompat.checkSelfPermission(contextOfFragment,
                 Manifest.permission.ACCESS_FINE_LOCATION) !=
-                PackageManager.PERMISSION_GRANTED) {
+                PackageManager.PERMISSION_GRANTED && getActivity() != null) {
             Log.wtf(TAG, "checkPermission_or_request: you allowed permission ");
+
             ActivityCompat.requestPermissions(getActivity(),
                     new String[]{Manifest.permission.ACCESS_FINE_LOCATION,},
                     1000);
@@ -331,9 +334,11 @@ public class pinnedmapsFragment extends Fragment implements OnMapReadyCallback, 
 
             Log.wtf(TAG, "checkPermission_or_request: already permission is allowed");
 
-            locationManager =
-                    (LocationManager) getActivity().getSystemService(LOCATION_SERVICE);
+            if(getActivity()!=null){
+                locationManager =
+                        (LocationManager) getActivity().getSystemService(LOCATION_SERVICE);
 
+            }
 
             updates(locationManager);
 
@@ -360,9 +365,12 @@ public class pinnedmapsFragment extends Fragment implements OnMapReadyCallback, 
                         "これ以上なにもできません", Toast.LENGTH_SHORT);
                 toast.show();
             }
+            if(getActivity() != null){
+                locationManager =
+                        (LocationManager) getActivity().getSystemService(LOCATION_SERVICE);
 
-            locationManager =
-                    (LocationManager) getActivity().getSystemService(LOCATION_SERVICE);
+            }
+
 
             updates(locationManager);
 
@@ -370,33 +378,26 @@ public class pinnedmapsFragment extends Fragment implements OnMapReadyCallback, 
     }
 
     public void updates(LocationManager locationManager) {
-        Activity activityOfFragment = getActivity();
-        Context contextOfFragment = getContext();
 
         //ここの==が！＝になっていたため、うまくいかなかった。現在位置情報を取得に成功！　私は賢くなっている！！！！！！！
+        if(getActivity()!= null){
 
-        if (ActivityCompat.checkSelfPermission(contextOfFragment,
-                Manifest.permission.ACCESS_FINE_LOCATION) ==
-                PackageManager.PERMISSION_GRANTED &&
-                ActivityCompat.checkSelfPermission(activityOfFragment, Manifest.permission.ACCESS_COARSE_LOCATION) ==
-                        PackageManager.PERMISSION_GRANTED) {
-
-
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
-                    300, 40, this);
-
-            locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,
-                    300, 40, this);
-            Log.wtf(TAG, "onRequestPermissionsResult:request your location!!");
+            if (ActivityCompat.checkSelfPermission(getActivity(),
+                    Manifest.permission.ACCESS_FINE_LOCATION) ==
+                    PackageManager.PERMISSION_GRANTED &&
+                    ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) ==
+                            PackageManager.PERMISSION_GRANTED) {
 
 
+                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
+                        300, 40, this);
+
+                locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,
+                        300, 40, this);
+                Log.wtf(TAG, "onRequestPermissionsResult:request your location!!");
+
+
+            }
         }
 
     }
@@ -424,59 +425,62 @@ public class pinnedmapsFragment extends Fragment implements OnMapReadyCallback, 
         if(!is_end) {
 
             Context contextOfFragment = getContext();
-
-            SharedPreferences data = contextOfFragment.getSharedPreferences("DataSave", Context.MODE_PRIVATE);
-
-
-            latitude = data.getFloat("LAT1", 400);
-            longitude = data.getFloat("LONG1", 400);
+            if(contextOfFragment != null){
 
 
-            Log.wtf(TAG, "onLocationChanged: ");
+                SharedPreferences data = contextOfFragment.getSharedPreferences("DataSave", Context.MODE_PRIVATE);
 
-            LatLng sydney;
 
-            String pintxt;
+                latitude = data.getFloat("LAT1", 400);
+                longitude = data.getFloat("LONG1", 400);
 
-            if (latitude == 400 || longitude == 400) {
 
-                sydney = new LatLng(location.getLatitude(), location.getLongitude());
-                pintxt = "Long press to PIN";
-            } else {
-                sydney = new LatLng(latitude, longitude);
-                pintxt = "PIN 1";
-                pinnumber = 1;
+                Log.wtf(TAG, "onLocationChanged: ");
+
+                LatLng sydney;
+
+                String pintxt;
+
+                if (latitude == 400 || longitude == 400) {
+
+                    sydney = new LatLng(location.getLatitude(), location.getLongitude());
+                    pintxt = "Long press to PIN";
+                } else {
+                    sydney = new LatLng(latitude, longitude);
+                    pintxt = "PIN 1";
+                    pinnumber = 1;
+                }
+
+                if (mMarker != null) {
+                    mMarker.remove();
+
+                    Log.wtf(TAG, "pin removed");
+                }
+
+                Activity activity = getActivity();
+
+                IconGenerator iconFactory = new IconGenerator(activity);
+
+
+                MarkerOptions markerOptions = new MarkerOptions()
+                        .icon(BitmapDescriptorFactory.fromBitmap(iconFactory.makeIcon(pintxt)))
+                        .position(sydney)
+                        .anchor(iconFactory.getAnchorU(), iconFactory.getAnchorV());
+                mMarker = mMap.addMarker(markerOptions);
+
+                CameraPosition cameraPosition = new CameraPosition.Builder()
+                        .target(sydney)      // Sets the center of the map to Mountain View
+                        .zoom(16)                   // Sets the zoom
+                        .bearing(0)                // Sets the orientation of the camera to east
+                        .tilt(70)                   // Sets the tilt of the camera to 30 degrees
+                        .build();                   // Creates a CameraPosition from the builder
+                mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+
+                Log.wtf(TAG, "pin reloaded");
+
+
+                mMap.getUiSettings().setScrollGesturesEnabled(true);
             }
-
-            if (mMarker != null) {
-                mMarker.remove();
-
-                Log.wtf(TAG, "pin removed");
-            }
-
-            Activity activity = getActivity();
-
-            IconGenerator iconFactory = new IconGenerator(activity);
-
-
-            MarkerOptions markerOptions = new MarkerOptions()
-                    .icon(BitmapDescriptorFactory.fromBitmap(iconFactory.makeIcon(pintxt)))
-                    .position(sydney)
-                    .anchor(iconFactory.getAnchorU(), iconFactory.getAnchorV());
-            mMarker = mMap.addMarker(markerOptions);
-
-            CameraPosition cameraPosition = new CameraPosition.Builder()
-                    .target(sydney)      // Sets the center of the map to Mountain View
-                    .zoom(16)                   // Sets the zoom
-                    .bearing(0)                // Sets the orientation of the camera to east
-                    .tilt(70)                   // Sets the tilt of the camera to 30 degrees
-                    .build();                   // Creates a CameraPosition from the builder
-            mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
-
-            Log.wtf(TAG, "pin reloaded");
-
-
-            mMap.getUiSettings().setScrollGesturesEnabled(true);
 
 
         }

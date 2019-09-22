@@ -27,7 +27,7 @@ class SendJson {
 
     }
 
-    boolean postPOST() throws Exception {
+    Boolean postPOST() throws Exception {
 
         JSONObject responseJsonObject = new JSONObject(sendData);
 
@@ -132,13 +132,12 @@ class SendJson {
                 }
 
 
-
-
-
-
-
-
                 return true;
+
+
+
+
+
 
             }
             if (statusCode == HttpURLConnection.HTTP_UNAUTHORIZED) {
@@ -152,8 +151,7 @@ class SendJson {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-        return false;
+        return null;
 
     }
 

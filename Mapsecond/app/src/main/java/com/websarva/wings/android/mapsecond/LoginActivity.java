@@ -1,12 +1,15 @@
 package com.websarva.wings.android.mapsecond;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.multidex.MultiDex;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Base64;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -36,7 +39,7 @@ public class LoginActivity extends AppCompatActivity {
 
 
     SharedPreferences data;
-    boolean is_logined_device;
+    boolean is_logged_device;
 
 
     private UserLoginTask mAuthTask = null;
@@ -45,20 +48,24 @@ public class LoginActivity extends AppCompatActivity {
     private AutoCompleteTextView mEmailView;
     private EditText mPasswordView;
 
+    @SuppressLint("GetInstance")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         data = this.getSharedPreferences("DataSave", Context.MODE_PRIVATE);
-        is_logined_device = data.getBoolean("Is_Logined_device", false);
+        is_logged_device = data.getBoolean("Is_Logged_device", false);
 
         MultiDex.install(this);
-        if(is_logined_device){
+        if(is_logged_device){
 
             String up = "";
-            SecretKeySpec keySpec = new SecretKeySpec("abcdefg098765432".getBytes(), "AES"); // キーファイル生成 暗号化で使った文字列と同様にする
-            Cipher cipher = null;
+            SecretKeySpec keySpec = new SecretKeySpec(GlobalValue.getCryptKey().getBytes(), "AES"); // キーファイル生成 暗号化で使った文字列と同様にする
+            Cipher cipher;
             String email = data.getString("EM",null);
+            System.out.println(email);
             String pass = data.getString("PW",null);
+            System.out.println(pass);
+
             try{
 
                 cipher = Cipher.getInstance("AES");
@@ -79,9 +86,21 @@ public class LoginActivity extends AppCompatActivity {
             }
 
 
-            mAuthTask = new UserLoginTask(email, up,this);
+            mAuthTask = new UserLoginTask(email, up);
+            mAuthTask.setOnCallBack(new UserLoginTask.CallBackTask(){
+                 @Override
+                public void CallBack(Boolean result){
+                     super.CallBack(result);
+                     Log.wtf("omg", "hahahahah");
+
+                        if(result) {
+                            Intent intent = new Intent(getApplication(), MainActivity.class);
+                            getApplication().startActivity(intent);
+                        }
+                 }
+            });
             mAuthTask.execute((Void) null);
-        }else {
+        }else{
 
             setContentView(R.layout.activity_login);
             // Set up the login form.
@@ -106,7 +125,57 @@ public class LoginActivity extends AppCompatActivity {
             mEmailSignInButton.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    attemptLogin();
+                    mAuthTask = attemptLogin();
+                    assert mAuthTask != null;
+                    mAuthTask.setOnCallBack(new UserLoginTask.CallBackTask(){
+                        @Override
+                        public void CallBack(Boolean result){
+                            super.CallBack(result);
+                            Log.wtf("omg", "hahahahah");
+
+
+
+
+                            SharedPreferences data = getApplication().getSharedPreferences("DataSave", Context.MODE_PRIVATE);
+
+
+                            try {
+                                SharedPreferences.Editor editor = data.edit();
+                                editor.putString("EM", mEmailView.getText().toString());
+
+
+                                SecretKeySpec keySpec = new SecretKeySpec(GlobalValue.getCryptKey().getBytes(), "AES"); // キーファイル生成
+                                Cipher cipher = Cipher.getInstance("AES");
+                                cipher.init(Cipher.ENCRYPT_MODE, keySpec);
+                                byte[] encrypted = cipher.doFinal(mPasswordView.getText().toString().getBytes()); // byte配列を暗号化
+                                String up = Base64.encodeToString(encrypted, Base64.DEFAULT); // Stringにエンコード
+
+                                // 入力されたログインIDとログインパスワード
+                                editor.putString("PW", up);
+                                editor.putBoolean("Is_Logged_device",true);
+
+                                // 保存
+                                editor.apply();
+                            } catch (NoSuchAlgorithmException e) {
+                                e.printStackTrace();
+                            } catch (InvalidKeyException e) {
+                                e.printStackTrace();
+                            } catch (NoSuchPaddingException e) {
+                                e.printStackTrace();
+                            } catch (BadPaddingException e) {
+                                e.printStackTrace();
+                            } catch (IllegalBlockSizeException e) {
+                                e.printStackTrace();
+                            }
+
+                            Intent intent = new Intent(getApplication(),MainActivity.class);
+                            getApplication().startActivity(intent);
+
+
+
+                        }
+                    });
+                    mAuthTask.execute((Void) null);
                 }
             });
 
@@ -116,19 +185,15 @@ public class LoginActivity extends AppCompatActivity {
 
 
 
-    /**
-     * Callback received when a permissions request has been completed.
-     */
-
 
     /**
      * Attempts to sign in or register the account specified by the login form.
      * If there are form errors (invalid email, missing fields, etc.), the
      * errors are presented and no actual login attempt is made.
      */
-    private void attemptLogin() {
+    private UserLoginTask attemptLogin() {
         if (mAuthTask != null) {
-            return;
+            return null;
         }
 
         // Reset errors.
@@ -168,9 +233,12 @@ public class LoginActivity extends AppCompatActivity {
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
 
-            mAuthTask = new UserLoginTask(email, password,this);
-            mAuthTask.execute((Void) null);
+            mAuthTask = new UserLoginTask(email, password);
+
+            return mAuthTask;
         }
+
+        return null;
     }
 
     private boolean isEmailValid(String email) {
@@ -180,17 +248,6 @@ public class LoginActivity extends AppCompatActivity {
     private boolean isPasswordValid(String password) {
         return password.length() > 4;
     }
-
-    /**
-     * Shows the progress UI and hides the login form.
-     */
-
-
-
-
-
-
-
 
 }
 

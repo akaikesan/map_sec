@@ -1,6 +1,6 @@
 package com.websarva.wings.android.mapsecond;
 
-public class RowData {
+class RowData {
 
     /**
      * Created by naoi on 2017/04/25.

@@ -84,6 +84,16 @@ public class CommentActivity extends FragmentActivity implements View.OnClickLis
 
 
                     SendComment mTask = new SendComment(content,lat,lon);
+                    mTask.setSendCommentCallBack(new SendComment.sendCommentCallBack(){
+                        @Override
+                        public void CallBack(Boolean result){
+
+                            if(result){
+                                finish();
+                            }
+
+                        }
+                    });
                     mTask.execute((Void) null);
 
                     break;

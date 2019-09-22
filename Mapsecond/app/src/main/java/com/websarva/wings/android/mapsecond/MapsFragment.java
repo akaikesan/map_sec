@@ -56,8 +56,10 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Locati
     private String TAG = "Verbose";
 
     public void GPSStatus() {
-        locationManager = (LocationManager) getContext().getSystemService(Context.LOCATION_SERVICE);
-        GpsStatus = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+        if(getContext() != null){
+            locationManager = (LocationManager) getContext().getSystemService(Context.LOCATION_SERVICE);
+            GpsStatus = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+        }
     }
 
     @Override
@@ -129,10 +131,6 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Locati
 
             mapFragment.getMapAsync(this);
 
-        } else {
-
-
-
         }
     }
 
@@ -166,9 +164,12 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Locati
         try {
             // Customise the styling of the base map using a JSON object defined
             // in a raw resource file.
-            boolean success = googleMap.setMapStyle(
-                    MapStyleOptions.loadRawResourceStyle(contextOfFragment
-                            , R.raw.style_json));
+            boolean success = false;
+            if (contextOfFragment != null) {
+                success = googleMap.setMapStyle(
+                        MapStyleOptions.loadRawResourceStyle(contextOfFragment
+                                , R.raw.style_json));
+            }
             if (!success) {
                 Log.e(TAG, "Style parsing failed.");
             }
@@ -188,9 +189,10 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Locati
 
         Context contextOfFragment = getContext();
 
+        assert contextOfFragment != null;
         if (ContextCompat.checkSelfPermission(contextOfFragment,
                 Manifest.permission.ACCESS_FINE_LOCATION) !=
-                PackageManager.PERMISSION_GRANTED) {
+                PackageManager.PERMISSION_GRANTED && getActivity() != null) {
             Log.wtf(TAG, "checkPermission_or_request: you allowed permission ");
             ActivityCompat.requestPermissions(getActivity(),
                     new String[]{Manifest.permission.ACCESS_FINE_LOCATION,},
@@ -199,11 +201,17 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Locati
 
             Log.wtf(TAG, "checkPermission_or_request: already permission is allowed");
 
-            locationManager =
-                    (LocationManager) getActivity().getSystemService(LOCATION_SERVICE);
+
+            if(getActivity() != null){
+
+                locationManager =
+                        (LocationManager) getActivity().getSystemService(LOCATION_SERVICE);
+                updates(locationManager);
+            }
 
 
-            updates(locationManager);
+
+
 
         }
 
@@ -229,10 +237,14 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Locati
                 toast.show();
             }
 
-            locationManager =
-                    (LocationManager) getActivity().getSystemService(LOCATION_SERVICE);
+            if(getActivity() != null){
 
-            updates(locationManager);
+                locationManager =
+                        (LocationManager) getActivity().getSystemService(LOCATION_SERVICE);
+
+                updates(locationManager);
+            }
+
 
         }
     }
@@ -243,20 +255,14 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Locati
 
         //ここの==が！＝になっていたため、うまくいかなかった。現在位置情報を取得に成功！　私は賢くなっている！！！！！！！
 
+        assert contextOfFragment != null;
+        assert activityOfFragment != null;
         if (ActivityCompat.checkSelfPermission(contextOfFragment,
                 Manifest.permission.ACCESS_FINE_LOCATION) ==
                 PackageManager.PERMISSION_GRANTED &&
                 ActivityCompat.checkSelfPermission(activityOfFragment, Manifest.permission.ACCESS_COARSE_LOCATION) ==
                         PackageManager.PERMISSION_GRANTED) {
 
-
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
             locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
                     300, 40, this);
 
