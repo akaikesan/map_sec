@@ -62,9 +62,7 @@ public class LoginActivity extends AppCompatActivity {
             SecretKeySpec keySpec = new SecretKeySpec(GlobalValue.getCryptKey().getBytes(), "AES"); // キーファイル生成 暗号化で使った文字列と同様にする
             Cipher cipher;
             String email = data.getString("EM",null);
-            System.out.println(email);
             String pass = data.getString("PW",null);
-            System.out.println(pass);
 
             try{
 

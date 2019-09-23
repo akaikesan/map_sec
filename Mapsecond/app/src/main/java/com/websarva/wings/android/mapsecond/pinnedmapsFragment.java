@@ -2,7 +2,6 @@
 package com.websarva.wings.android.mapsecond;
 
 
-
 import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -28,8 +27,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-
-
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -42,6 +39,9 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.maps.android.ui.IconGenerator;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import static android.content.Context.LOCATION_SERVICE;
 
@@ -161,6 +161,59 @@ public class pinnedmapsFragment extends Fragment implements OnMapReadyCallback, 
                     mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
 
                     Log.wtf(TAG, "pin reloaded");
+
+
+                    GetComment gc = new GetComment((float) latitude,(float) longitude);
+
+                    gc.setOngcCallBack(new GetComment.gcCallBackTask(){
+                        @Override
+                        void gcCallBack(String result) {
+                            try {
+
+                                JSONObject json = new JSONObject(result);
+
+                                if (json.isNull("comment0")) {
+                                    Log.d("pinnedmapsFragment","JSON has NOTHING");
+                                    return;
+                                }
+
+                                JSONArray key = json.names ();
+                                for (int i = 0; i < key.length (); ++i) {
+                                    String keys = key.getString (i);
+                                    JSONObject value = json.getJSONObject(keys);
+
+
+                                    // do something with jsonObject here
+                                    IconGenerator iconFactory = new IconGenerator(getContext());
+                                    String pintext;
+                                    if(value.getString("content").length() > 10){
+                                        pintext = value.getString("content").substring(0,10);
+                                    }else{
+                                        pintext = value.getString("content");
+                                    }
+
+                                    MarkerOptions markerOptions = new MarkerOptions()
+                                            .icon(BitmapDescriptorFactory.fromBitmap(iconFactory.makeIcon(pintext)))
+                                            .position(new LatLng(value.getDouble("latitude"),value.getDouble("longitude")))
+                                            .anchor(iconFactory.getAnchorU(), iconFactory.getAnchorV());
+                                    mMarker = mMap.addMarker(markerOptions);
+
+
+                                }
+
+
+
+
+
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+
+                        }
+
+                    });
+
+                    gc.execute();
 
 
                 }
@@ -379,7 +432,6 @@ public class pinnedmapsFragment extends Fragment implements OnMapReadyCallback, 
 
     public void updates(LocationManager locationManager) {
 
-        //ここの==が！＝になっていたため、うまくいかなかった。現在位置情報を取得に成功！　私は賢くなっている！！！！！！！
         if(getActivity()!= null){
 
             if (ActivityCompat.checkSelfPermission(getActivity(),
