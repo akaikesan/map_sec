@@ -99,7 +99,9 @@ public class GetProfile extends AsyncTask<Void,Void,Boolean> {
 
 
             try {
-                data.setTitle(jsonobj.getString("comment"+i));
+                JSONObject jvalue = jsonobj.getJSONObject("comment"+i);
+                data.setTitle(jvalue.getString("content"));
+                data.setFav(jsonobj.getInt("fav"));
             } catch (JSONException e) {
                 e.printStackTrace();
             }

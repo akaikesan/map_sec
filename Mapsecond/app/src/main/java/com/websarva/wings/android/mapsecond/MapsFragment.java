@@ -32,22 +32,18 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.Marker;
 import com.google.maps.android.clustering.ClusterManager;
-import com.google.maps.android.ui.IconGenerator;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import static android.content.Context.LOCATION_SERVICE;
 
 public class MapsFragment extends Fragment implements OnMapReadyCallback, LocationListener {
 
-    private ClusterManager<Person> mClusterManager;
     private GoogleMap mMap;
 
     private Marker mMarker = null;
 
     private boolean is_end;
+
+    ClusterManager<Person> mClusterManager;
 
 
     double latitude = 0, longitude = 0;
@@ -76,6 +72,8 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Locati
         Context contextOfFragment = getContext();
 
         GPSStatus();
+
+
 
         if (!GpsStatus) {
             Toast toast = Toast.makeText(contextOfFragment,
@@ -116,71 +114,6 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Locati
             }
         });
 
-        GetComment gc = new GetComment((float) latitude,(float) longitude);
-
-        gc.setOngcCallBack(new GetComment.gcCallBackTask(){
-            @Override
-            void gcCallBack(String result) {
-                try {
-                    if(getContext() != null){
-                        mClusterManager = new ClusterManager<>(getContext(),mMap);
-                        mMap.setOnCameraIdleListener(mClusterManager);
-                        mMap.setOnMarkerClickListener(mClusterManager);
-                        mMap.setOnInfoWindowClickListener(mClusterManager);
-
-                        JSONObject json = new JSONObject(result);
-
-                        if (json.isNull("comment0")) {
-                            Log.d("pinnedmapsFragment","JSON has NOTHING");
-                            return;
-                        }
-
-                        JSONArray key = json.names ();
-                        for (int i = 0; i < key.length (); ++i) {
-                            String keys = key.getString (i);
-                            JSONObject value = json.getJSONObject(keys);
-
-
-                            // do something with jsonObject here
-                            String pintext;
-                            if(value.getString("content").length() > 10){
-                                pintext = value.getString("content").substring(0,7) + "...";
-                            }else{
-                                pintext = value.getString("content");
-                            }
-/*                            IconGenerator iconFactory = new IconGenerator(getContext());
-
-                            MarkerOptions markerOptions = new MarkerOptions()
-                                    .icon(BitmapDescriptorFactory.fromBitmap(iconFactory.makeIcon(pintext)))
-                                    .position(new LatLng(value.getDouble("latitude"),value.getDouble("longitude")))
-                                    .anchor(iconFactory.getAnchorU(), iconFactory.getAnchorV());
-                            mMarker = mMap.addMarker(markerOptions);
-*/
-                            mClusterManager.addItem(new Person(value.getDouble("latitude"),value.getDouble("longitude"),pintext));
-                        }
-
-
-                        mClusterManager.cluster();
-
-                    }
-
-
-
-
-
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-
-            }
-
-        });
-
-        gc.execute();
-
-
-
-
         return view;
     }
 
@@ -217,7 +150,9 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Locati
         Context contextOfFragment = getContext();
 
         mMap = googleMap;
-
+        if(contextOfFragment != null){
+            mClusterManager = new ClusterManager<>(contextOfFragment,mMap);
+        }
 
         mMap.getUiSettings().setAllGesturesEnabled(false);
 
@@ -363,7 +298,6 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Locati
         if(!is_end) {
 
 
-            Log.wtf(TAG, "onLocationChanged: ");
 
             latitude = location.getLatitude();
 
@@ -374,35 +308,23 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Locati
             if (mMarker != null) {
                 mMarker.remove();
 
-                Log.wtf("onLocationchanged", "pin removed");
+                Log.v("MapsF.onLocationchanged", "pin removed");
             } else {
-                Log.wtf("onLocationchanged", "pin is null");
+                Log.v("MapsF.onLocationchanged", "pin is null");
             }
 
-/*
-            Activity activity = getActivity();
-
-
-
-            IconGenerator iconFactory = new IconGenerator(activity);
-
-
-            MarkerOptions markerOptions = new MarkerOptions()
-                    .icon(BitmapDescriptorFactory.fromBitmap(iconFactory.makeIcon("You're here!")))
-                    .position(sydney)
-                    .anchor(iconFactory.getAnchorU(), iconFactory.getAnchorV());
-            mMarker = mMap.addMarker(markerOptions);
-*/
+            DisplayComment dc = new DisplayComment(latitude,longitude,mMap,getContext(),mClusterManager);
+            dc.display();
 
             CameraPosition cameraPosition = new CameraPosition.Builder()
                     .target(sydney)      // Sets the center of the map to Mountain View
                     .zoom(16)                   // Sets the zoom
-                    .bearing(0)                // Sets the orientation of the camera to east
+                    .bearing(0)               // Sets the orientation of the camera to east
                     .tilt(70)                   // Sets the tilt of the camera to 30 degrees
                     .build();                   // Creates a CameraPosition from the builder
             mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
 
-            Log.wtf(TAG, "pin reloaded");
+            Log.v(TAG, "pin reloaded");
 
 
 
@@ -424,9 +346,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Locati
 
         is_end = true;
 
-
-
-        Log.wtf("onDestroy","MapsFragment is finished");
+        Log.v("onDestroy","MapsFragment is finished");
 
     }
 

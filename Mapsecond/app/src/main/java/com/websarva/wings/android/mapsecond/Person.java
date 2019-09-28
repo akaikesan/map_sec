@@ -9,12 +9,23 @@ public class Person implements ClusterItem {
 
     private String snip;
 
-    Person(double lat,double lon,String snip){
+    private String username;
+
+    Person(double lat,double lon,String snip, String username){
         this.lat = lat;
         this.lon = lon;
         this.snip = snip;
-
+        this.username = username;
     }
+
+    String getUsername(){
+        return username;
+    }
+
+    String getComment(){
+        return snip;
+    }
+
     @Override
     public LatLng getPosition() {
         return new LatLng(lat,lon);
@@ -27,6 +38,10 @@ public class Person implements ClusterItem {
 
     @Override
     public String getSnippet() {
-        return snip;
+        if(snip.length() > 10){
+            return snip.substring(0,7) + "...";
+        }else{
+            return snip;
+        }
     }
 }
