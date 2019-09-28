@@ -18,6 +18,7 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
@@ -91,10 +92,16 @@ public class LoginActivity extends AppCompatActivity {
                      super.CallBack(result);
                      Log.wtf("omg", "hahahahah");
 
-                        if(result) {
+                    try {
+                        if (result) {
                             Intent intent = new Intent(getApplication(), MainActivity.class);
                             getApplication().startActivity(intent);
                         }
+                    }
+                    catch (Exception e){
+                        Toast.makeText(getApplicationContext(),"sorry, no response",Toast.LENGTH_SHORT).show();
+                        e.printStackTrace();
+                    }
                  }
             });
             mAuthTask.execute((Void) null);

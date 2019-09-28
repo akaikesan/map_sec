@@ -73,7 +73,6 @@ class GetProfileInBackGround {
                 in.close();
 
 
-                System.out.println(result.toString());
                 return result.toString();
 
 

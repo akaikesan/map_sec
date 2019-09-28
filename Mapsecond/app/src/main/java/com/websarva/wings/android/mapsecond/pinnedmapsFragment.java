@@ -145,6 +145,12 @@ public class pinnedmapsFragment extends Fragment implements OnMapReadyCallback, 
 
                     IconGenerator iconFactory = new IconGenerator(getContext());
 
+                    mMap.getUiSettings().setAllGesturesEnabled(false);
+
+                    mMap.getUiSettings().setCompassEnabled(false);
+
+                    mMap.getUiSettings().setMapToolbarEnabled(false);
+
 
                     MarkerOptions markerOptions = new MarkerOptions()
                             .icon(BitmapDescriptorFactory.fromBitmap(iconFactory.makeIcon("PIN " + pinnumber)))
@@ -202,8 +208,7 @@ public class pinnedmapsFragment extends Fragment implements OnMapReadyCallback, 
                                 }
 
 
-
-
+                                mMap.getUiSettings().setScrollGesturesEnabled(true);
 
                             } catch (JSONException e) {
                                 e.printStackTrace();
@@ -259,8 +264,6 @@ public class pinnedmapsFragment extends Fragment implements OnMapReadyCallback, 
 
         mMap = googleMap;
 
-
-        mMap.getUiSettings().setZoomControlsEnabled(false);
 
         mMap.getUiSettings().setAllGesturesEnabled(false);
 
@@ -532,6 +535,8 @@ public class pinnedmapsFragment extends Fragment implements OnMapReadyCallback, 
 
 
                 mMap.getUiSettings().setScrollGesturesEnabled(true);
+
+
             }
 
 
