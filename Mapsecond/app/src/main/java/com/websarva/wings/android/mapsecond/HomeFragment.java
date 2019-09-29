@@ -29,7 +29,6 @@ public class HomeFragment extends Fragment {
 
         getTask.execute();
 
-        // 3カウントのCountDownLatchを作成する
 
         return view;
     }

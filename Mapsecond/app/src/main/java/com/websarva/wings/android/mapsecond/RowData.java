@@ -9,6 +9,18 @@ class RowData {
 
     private String comment;
     private int fav;
+    private String username;
+
+    //been set in createDataset and gotten in RecycleViewAdapter.
+
+    void setUsername(String username){
+        this.username = username;
+    }
+
+    String getUsername(){
+        return username;
+    }
+
 
     void setFav(int fav){
         this.fav = fav;
@@ -18,11 +30,13 @@ class RowData {
         return fav;
     }
 
-    String getTitle(){
-        return comment;
-    }
+
 
     void setTitle(String s){
         comment = s;
+    }
+
+    String getTitle(){
+        return comment;
     }
 }

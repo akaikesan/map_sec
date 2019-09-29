@@ -61,7 +61,6 @@ class SendCommentBackGround {
 
             String cookie_in_request = cookie_getter.getStringCookie();
 
-            System.out.println(cookie_in_request);
             urlConnection.setRequestProperty("Cookie",cookie_in_request);
             //リクエストのボディ送信を許可する
             urlConnection.setDoOutput(true);

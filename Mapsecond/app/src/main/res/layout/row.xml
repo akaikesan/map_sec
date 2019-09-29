@@ -13,23 +13,40 @@
             android:layout_height="wrap_content"
             android:src="@mipmap/ic_launcher"/> !-->
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
             <TextView
+                android:id="@+id/username"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.5"
+                android:textSize="@dimen/font_size_medium"
+                android:textColor="@android:color/black"/>
+
+            <TextView
                 android:id="@+id/comment"
                 android:layout_width="wrap_content"
-                android:layout_height="0dp"
+                android:layout_height="wrap_content"
                 android:layout_weight="0.5"
-                android:textColor="@android:color/white" />
+                android:textSize="@dimen/font_size_medium"
+                android:textColor="@android:color/black" />
 
             <TextView
                 android:id="@+id/fav"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="right"
-                android:textColor="@android:color/white" />
+                android:textColor="@android:color/black"
+                android:paddingRight="5dp"
+                android:paddingStart="240dp"
+                android:paddingEnd="5dp"
+                android:paddingLeft="240dp" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@android:color/darker_gray"/>
 
         </LinearLayout>
 

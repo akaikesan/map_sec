@@ -29,17 +29,26 @@ class DisplayComment implements ClusterManager.OnClusterClickListener<Person>,Cl
 
     private Context context;
 
-    DisplayComment(double latitude, double longitude, GoogleMap mMap, Context context,ClusterManager<Person> clusterManager){
+    static Cluster<Person> mCluster;
+
+    DisplayComment(double latitude, double longitude, GoogleMap mMap, Context context){
         this.latitude = latitude;
         this.longitude = longitude;
         this.mMap = mMap;
         this.context = context;
-        this.mClusterManager = clusterManager;
+        mClusterManager = new ClusterManager<>(context,mMap);
     }
 
 
 
     void display(){
+
+        mMap.getUiSettings().setAllGesturesEnabled(false);
+
+        mMap.getUiSettings().setCompassEnabled(false);
+
+        mMap.getUiSettings().setMapToolbarEnabled(false);
+
         GetComment gc = new GetComment((float) latitude,(float) longitude);
 
         mClusterManager.setOnClusterClickListener(DisplayComment.this);
@@ -70,19 +79,16 @@ class DisplayComment implements ClusterManager.OnClusterClickListener<Person>,Cl
                         for (int i = 0; i < key.length (); ++i) {
                             String keys = key.getString (i);
                             JSONObject value = json.getJSONObject(keys);
-
-
                             // do something with jsonObject here
-
-
-
 
 
                             mClusterManager.addItem(new Person(
                                     value.getDouble("latitude"),
                                     value.getDouble("longitude"),
                                     value.getString("content"),
-                                    value.getString("username")));
+                                    value.getString("username"),
+                                    value.getInt("fav")));
+
                         }
 
 
@@ -101,6 +107,8 @@ class DisplayComment implements ClusterManager.OnClusterClickListener<Person>,Cl
             }
 
         });
+
+
 
         gc.execute();
 
@@ -140,20 +148,30 @@ class DisplayComment implements ClusterManager.OnClusterClickListener<Person>,Cl
 
         intent.putExtra("CONTENT", item.getComment());
 
-        System.out.println(item.getComment());
 
         intent.putExtra("USERNAME",item.getUsername());
 
-        Log.wtf("OnClusteritemClick","ClusterItem was clicked");
+        intent.putExtra("FAV",item.getFav());
+
+
+
+        Log.i("OnClusteritemClick","ClusterItem was clicked");
 
         context.startActivity(intent);
         return false;
+
     }
 
 
     @Override
     public boolean onClusterClick(Cluster<Person> cluster) {
         Log.wtf("OnClusterClick","Cluster was clicked");
+
+        Intent intent = new Intent(context, CommentListActivity.class);
+
+        mCluster = cluster;
+
+        context.startActivity(intent);
 
         return true;
     }

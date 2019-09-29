@@ -11,13 +11,19 @@ public class Person implements ClusterItem {
 
     private String username;
 
-    Person(double lat,double lon,String snip, String username){
+    private int fav;
+
+    Person(double lat,double lon,String snip, String username, int fav){
         this.lat = lat;
         this.lon = lon;
         this.snip = snip;
         this.username = username;
+        this.fav = fav;
     }
 
+    int getFav(){
+        return fav;
+    }
     String getUsername(){
         return username;
     }

@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="com.websarva.wings.android.mapsecond">
-    <!-- To auto-complete the email text field in the login form with the user's emails -->
+
     <application
         android:allowBackup="true"
         android:colorPrimary="@android:color/black"
@@ -14,7 +14,8 @@
         android:theme="@style/AppTheme"
         tools:ignore="ExtraText,GoogleAppIndexingWarning"
         tools:targetApi="n">
-        <activity android:name=".CommentFocusActivity"></activity>
+        <activity android:name=".CommentListActivity"></activity>
+        <activity android:name=".CommentFocusActivity" />
         <activity android:name=".LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -33,16 +34,15 @@
         <activity
             android:name=".MainActivity"
             android:label="@string/title_activity_maps"
-            tools:ignore="DuplicateActivity"></activity>
-
+            tools:ignore="DuplicateActivity" />
         <activity
             android:name=".CommentActivity"
             android:label="@string/title_activity_maps" />
+
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyAFOJcECgKw0g3N-V_cQGGXEHuFvsqE5BQ" />
     </application>
-    <uses-permission android:name="android.permission.READ_PROFILE" />
     <uses-permission android:name="android.permission.READ_CONTACTS" />
     <!--
          The ACCESS_COARSE/FINE_LOCATION permissions are not required to use
@@ -52,7 +52,8 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.INTERNET" />
-
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+
+    <uses-permission android:name="android.permission.READ_PROFILE" />
 
 </manifest>

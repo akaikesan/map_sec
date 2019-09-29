@@ -29,7 +29,6 @@ class GetCommentInBackGround {
         this.sendData ="{ \"latitude\":\"" + latitude + "\",\"longitude\":\"" + longitude + "\",\"lon_range\":\"" + lon_range +"\"}";
 
 
-        System.out.println(sendData);
     }
 
 

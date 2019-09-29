@@ -28,6 +28,7 @@ public class RecycleViewAdapter extends RecyclerView.Adapter<MyViewHolder> {
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
         holder.titleView.setText(list.get(position).getTitle());
         holder.favView.setText(String.valueOf(list.get(position).getFav()));
+        holder.userNameView.setText(list.get(position).getUsername());
     }
 
     @Override

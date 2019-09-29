@@ -3,7 +3,6 @@ package com.websarva.wings.android.mapsecond;
 
 
 import android.Manifest;
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -39,15 +38,11 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.maps.android.ui.IconGenerator;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import static android.content.Context.LOCATION_SERVICE;
 
 public class pinnedmapsFragment extends Fragment implements OnMapReadyCallback, LocationListener {
 
-    private boolean is_end;
+    private boolean pin_is_registered;
 
     private GoogleMap mMap;
 
@@ -59,6 +54,9 @@ public class pinnedmapsFragment extends Fragment implements OnMapReadyCallback, 
     boolean GpsStatus;
 
     int pinnumber = 0;
+
+    Context contextOfFragment;
+
 
     LocationManager locationManager;
     private String TAG = "Verbose";
@@ -73,12 +71,18 @@ public class pinnedmapsFragment extends Fragment implements OnMapReadyCallback, 
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-
-        is_end = false;
-
         super.onCreate(savedInstanceState);
 
-        Context contextOfFragment = getContext();
+        contextOfFragment = getContext();
+
+        if(contextOfFragment != null) {
+            SharedPreferences data = contextOfFragment.getSharedPreferences("DataSave", Context.MODE_PRIVATE);
+
+            if(400 == data.getFloat("LAT1", 400))  pin_is_registered = false;
+        }
+
+
+
 
 
         GPSStatus();
@@ -112,7 +116,7 @@ public class pinnedmapsFragment extends Fragment implements OnMapReadyCallback, 
         view.findViewById(R.id.nextpinbt).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Context contextOfFragment = getContext();
+
 
                 if(contextOfFragment !=null) {
                     SharedPreferences data = contextOfFragment.getSharedPreferences("DataSave", Context.MODE_PRIVATE);
@@ -137,88 +141,27 @@ public class pinnedmapsFragment extends Fragment implements OnMapReadyCallback, 
 
                     LatLng sydney = new LatLng(latitude, longitude);
 
+                    //remove previous marker
+
                     if (mMarker != null) {
                         mMarker.remove();
-
                         Log.wtf(TAG, "pin removed");
                     }
 
-                    IconGenerator iconFactory = new IconGenerator(getContext());
+                    //display comment around current marker.----------------
 
-                    mMap.getUiSettings().setAllGesturesEnabled(false);
+                    DisplayComment dc = new DisplayComment(latitude,longitude,mMap,getContext());
+                    dc.display();
+                    String pintext = "PIN " + pinnumber;
 
-                    mMap.getUiSettings().setCompassEnabled(false);
+                    //pin current marker------------------------------------
 
-                    mMap.getUiSettings().setMapToolbarEnabled(false);
-
-
-                    MarkerOptions markerOptions = new MarkerOptions()
-                            .icon(BitmapDescriptorFactory.fromBitmap(iconFactory.makeIcon("PIN " + pinnumber)))
-                            .position(sydney)
-                            .anchor(iconFactory.getAnchorU(), iconFactory.getAnchorV());
-                    mMarker = mMap.addMarker(markerOptions);
-
-                    CameraPosition cameraPosition = new CameraPosition.Builder()
-                            .target(sydney)      // Sets the center of the map to Mountain View
-                            .zoom(16)                   // Sets the zoom
-                            .bearing(0)                // Sets the orientation of the camera to east
-                            .tilt(70)                   // Sets the tilt of the camera to 30 degrees
-                            .build();                   // Creates a CameraPosition from the builder
-                    mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+                    pinMarker(sydney,pintext);
 
                     Log.wtf(TAG, "pin reloaded");
 
 
-                    GetComment gc = new GetComment((float) latitude,(float) longitude);
 
-                    gc.setOngcCallBack(new GetComment.gcCallBackTask(){
-                        @Override
-                        void gcCallBack(String result) {
-                            try {
-
-                                JSONObject json = new JSONObject(result);
-
-                                if (json.isNull("comment0")) {
-                                    Log.d("pinnedmapsFragment","JSON has NOTHING");
-                                    return;
-                                }
-
-                                JSONArray key = json.names ();
-                                for (int i = 0; i < key.length (); ++i) {
-                                    String keys = key.getString (i);
-                                    JSONObject value = json.getJSONObject(keys);
-
-
-                                    // do something with jsonObject here
-                                    IconGenerator iconFactory = new IconGenerator(getContext());
-                                    String pintext;
-                                    if(value.getString("content").length() > 10){
-                                        pintext = value.getString("content").substring(0,10);
-                                    }else{
-                                        pintext = value.getString("content");
-                                    }
-
-                                    MarkerOptions markerOptions = new MarkerOptions()
-                                            .icon(BitmapDescriptorFactory.fromBitmap(iconFactory.makeIcon(pintext)))
-                                            .position(new LatLng(value.getDouble("latitude"),value.getDouble("longitude")))
-                                            .anchor(iconFactory.getAnchorU(), iconFactory.getAnchorV());
-                                    mMarker = mMap.addMarker(markerOptions);
-
-
-                                }
-
-
-                                mMap.getUiSettings().setScrollGesturesEnabled(true);
-
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
-
-                        }
-
-                    });
-
-                    gc.execute();
 
 
                 }
@@ -260,16 +203,20 @@ public class pinnedmapsFragment extends Fragment implements OnMapReadyCallback, 
     @Override
     public void onMapReady(GoogleMap googleMap) {
 
-        final Context contextOfFragment = getContext();
 
         mMap = googleMap;
 
+        //basic map settings-----------------------------------------------------
 
         mMap.getUiSettings().setAllGesturesEnabled(false);
 
         mMap.getUiSettings().setCompassEnabled(false);
 
         mMap.getUiSettings().setMapToolbarEnabled(false);
+
+        mMap.getUiSettings().setScrollGesturesEnabled(true);
+        //------------------------------------------------------------------------
+
 
         try {
             // Customise the styling of the base map using a JSON object defined
@@ -477,9 +424,9 @@ public class pinnedmapsFragment extends Fragment implements OnMapReadyCallback, 
     @Override
     public void onLocationChanged(Location location) {
 
-        if(!is_end) {
+        if(pin_is_registered) {
+            //If pin has never registered.
 
-            Context contextOfFragment = getContext();
             if(contextOfFragment != null){
 
 
@@ -496,15 +443,8 @@ public class pinnedmapsFragment extends Fragment implements OnMapReadyCallback, 
 
                 String pintxt;
 
-                if (latitude == 400 || longitude == 400) {
-
-                    sydney = new LatLng(location.getLatitude(), location.getLongitude());
-                    pintxt = "Long press to PIN";
-                } else {
-                    sydney = new LatLng(latitude, longitude);
-                    pintxt = "PIN 1";
-                    pinnumber = 1;
-                }
+                sydney = new LatLng(location.getLatitude(), location.getLongitude());
+                pintxt = "Long press to PIN";
 
                 if (mMarker != null) {
                     mMarker.remove();
@@ -512,29 +452,11 @@ public class pinnedmapsFragment extends Fragment implements OnMapReadyCallback, 
                     Log.wtf(TAG, "pin removed");
                 }
 
-                Activity activity = getActivity();
 
-                IconGenerator iconFactory = new IconGenerator(activity);
-
-
-                MarkerOptions markerOptions = new MarkerOptions()
-                        .icon(BitmapDescriptorFactory.fromBitmap(iconFactory.makeIcon(pintxt)))
-                        .position(sydney)
-                        .anchor(iconFactory.getAnchorU(), iconFactory.getAnchorV());
-                mMarker = mMap.addMarker(markerOptions);
-
-                CameraPosition cameraPosition = new CameraPosition.Builder()
-                        .target(sydney)      // Sets the center of the map to Mountain View
-                        .zoom(16)                   // Sets the zoom
-                        .bearing(0)                // Sets the orientation of the camera to east
-                        .tilt(70)                   // Sets the tilt of the camera to 30 degrees
-                        .build();                   // Creates a CameraPosition from the builder
-                mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+                pinMarker(sydney,pintxt);
 
                 Log.wtf(TAG, "pin reloaded");
 
-
-                mMap.getUiSettings().setScrollGesturesEnabled(true);
 
 
             }
@@ -557,12 +479,31 @@ public class pinnedmapsFragment extends Fragment implements OnMapReadyCallback, 
     public void onDestroy(){
         super.onDestroy();
 
-        is_end = true;
+        //this prevent from memory leaking.
 
-
+        pin_is_registered = false;
 
         Log.wtf("onDestroy in pinned map","pinnedMapsFragment is finished");
 
+    }
+
+
+    private void pinMarker(LatLng sydney,String pintext){
+        IconGenerator iconFactory = new IconGenerator(getContext());
+
+        MarkerOptions markerOptions = new MarkerOptions()
+                .icon(BitmapDescriptorFactory.fromBitmap(iconFactory.makeIcon(pintext)))
+                .position(sydney)
+                .anchor(iconFactory.getAnchorU(), iconFactory.getAnchorV());
+        mMarker = mMap.addMarker(markerOptions);
+
+        CameraPosition cameraPosition = new CameraPosition.Builder()
+                .target(sydney)      // Sets the center of the map to Mountain View
+                .zoom(16)                   // Sets the zoom
+                .bearing(0)                // Sets the orientation of the camera to east
+                .tilt(70)                   // Sets the tilt of the camera to 30 degrees
+                .build();                   // Creates a CameraPosition from the builder
+        mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
     }
 
 

@@ -31,7 +31,6 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.Marker;
-import com.google.maps.android.clustering.ClusterManager;
 
 import static android.content.Context.LOCATION_SERVICE;
 
@@ -43,7 +42,6 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Locati
 
     private boolean is_end;
 
-    ClusterManager<Person> mClusterManager;
 
 
     double latitude = 0, longitude = 0;
@@ -150,9 +148,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Locati
         Context contextOfFragment = getContext();
 
         mMap = googleMap;
-        if(contextOfFragment != null){
-            mClusterManager = new ClusterManager<>(contextOfFragment,mMap);
-        }
+
 
         mMap.getUiSettings().setAllGesturesEnabled(false);
 
@@ -313,7 +309,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Locati
                 Log.v("MapsF.onLocationchanged", "pin is null");
             }
 
-            DisplayComment dc = new DisplayComment(latitude,longitude,mMap,getContext(),mClusterManager);
+            DisplayComment dc = new DisplayComment(latitude,longitude,mMap,getContext());
             dc.display();
 
             CameraPosition cameraPosition = new CameraPosition.Builder()
