@@ -50,7 +50,7 @@ class GetComment extends AsyncTask<Void, Void, String> {
 
     }
 
-    void setOngcCallBack(gcCallBackTask _cbj) {
+    void setOnCallBack(gcCallBackTask _cbj) {
         callbacktask = _cbj;
     }
 

@@ -14,7 +14,7 @@ import java.util.Locale;
 
 class GetProfileInBackGround {
 
-    String getGET(){
+    static String getGET(){
         try {
             URL url = new URL(GlobalValue.getScheme() + "://"+ GlobalValue.getHost()+":"+GlobalValue.getPort()+ "/"+GlobalValue.getPath()+"/profile/");
 

@@ -38,7 +38,7 @@ public class CommentListActivity extends AppCompatActivity {
 
 
 
-//Copied a part of GetProfile.java and paste here.
+//Copied a part of HomeFragment.java and paste here.
     private List<RowData> createDataSet(Cluster<Person> cluster) {
 
         List<RowData> dataset = new ArrayList<>();

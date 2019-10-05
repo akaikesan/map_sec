@@ -14,8 +14,10 @@ class MyViewHolder extends RecyclerView.ViewHolder {
     MyViewHolder(@NonNull View itemView) {
         super(itemView);
         titleView =  itemView.findViewById(R.id.comment);
+
         favView = itemView.findViewById(R.id.fav);
         favView.setTypeface(Typeface.MONOSPACE);
+
         userNameView = itemView.findViewById(R.id.username);
         userNameView.setTypeface(Typeface.DEFAULT_BOLD);
 

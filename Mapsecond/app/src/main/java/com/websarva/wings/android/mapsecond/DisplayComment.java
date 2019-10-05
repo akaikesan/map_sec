@@ -58,7 +58,7 @@ class DisplayComment implements ClusterManager.OnClusterClickListener<Person>,Cl
         mMap.setOnCameraIdleListener(mClusterManager);
         mMap.setOnMarkerClickListener(mClusterManager);
 
-        gc.setOngcCallBack(new GetComment.gcCallBackTask(){
+        gc.setOnCallBack(new GetComment.gcCallBackTask(){
             @Override
             void gcCallBack(String result) {
 

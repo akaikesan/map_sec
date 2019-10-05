@@ -138,16 +138,11 @@ public class LoginActivity extends AppCompatActivity {
                             super.CallBack(result);
                             Log.wtf("omg", "hahahahah");
 
-
-
-
                             SharedPreferences data = getApplication().getSharedPreferences("DataSave", Context.MODE_PRIVATE);
-
 
                             try {
                                 SharedPreferences.Editor editor = data.edit();
                                 editor.putString("EM", mEmailView.getText().toString());
-
 
                                 SecretKeySpec keySpec = new SecretKeySpec(GlobalValue.getCryptKey().getBytes(), "AES"); // キーファイル生成
                                 Cipher cipher = Cipher.getInstance("AES");

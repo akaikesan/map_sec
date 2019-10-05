@@ -43,7 +43,7 @@ class GetCommentInBackGround {
 
 
         try {
-            URL url = new URL("http://localhost:8000/accounts/pincomment/");
+            URL url = new URL("http://" + GlobalValue.getHost() + ":" + GlobalValue.getPort() + "/" + GlobalValue.getPath() + "/pincomment/");
 
 
 
