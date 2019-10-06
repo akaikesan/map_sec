@@ -18,9 +18,9 @@ class GetImageInBackground {
 
 
 
-    static Bitmap getImage() {
+    static Bitmap getImage(String username) {
         try {
-            URL url = new URL(GlobalValue.getScheme() + "://" + GlobalValue.getHost() + ":" + GlobalValue.getPort() + "/" + GlobalValue.getPath() + "/image/");
+            URL url = new URL(GlobalValue.getScheme() + "://" + GlobalValue.getHost() + ":" + GlobalValue.getPort() + "/" + GlobalValue.getPath() + "/image/" + username);
 
 
             HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();

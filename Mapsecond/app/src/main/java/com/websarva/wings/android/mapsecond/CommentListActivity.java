@@ -20,7 +20,7 @@ public class CommentListActivity extends AppCompatActivity {
 
         RecyclerView rv = findViewById(R.id.myCommentListRecyclerView);
 
-        RecycleViewAdapter adapter = new RecycleViewAdapter(this.createDataSet(DisplayComment.mCluster));
+        RecycleViewAdapter adapter = new RecycleViewAdapter(this.createDataSet(DisplayComment.mCluster),getApplication());
 
         LinearLayoutManager llm = new LinearLayoutManager(this);
 
@@ -49,8 +49,6 @@ public class CommentListActivity extends AppCompatActivity {
             data.setFav(p.getFav());
 
             data.setUsername(p.getUsername());
-
-            data.setIcon(p.getIcon());
 
             dataset.add(data);
 

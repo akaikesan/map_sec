@@ -22,7 +22,9 @@ public class HomeFragment extends Fragment {
 
     GetProfile getTask;
 
-    GetImage getImage;
+    GetImage mGetImage;
+
+    String username;
 
     @Override
     public void onCreate(Bundle savedInstanceState){
@@ -44,7 +46,7 @@ public class HomeFragment extends Fragment {
 
                     JSONObject json = new JSONObject(str_profile_json);
 
-                    String username = json.getString("username");
+                    username = json.getString("username");
 
                     String introduce = json.getString("introduce");
 
@@ -78,31 +80,22 @@ public class HomeFragment extends Fragment {
 
         getTask.execute();
 
-        getImage = new GetImage();
+        mGetImage = new GetImage(username);
 
-        getImage.setOnCallBack(new GetImage.CallBackTask(){
+        mGetImage.setOnCallBack(new GetImage.CallBackTask(){
             @Override
             void callBack(Bitmap image){
-                System.out.println(image);
 
 
                 if(getActivity() != null){
                     CircleImageView imageView = view.findViewById(R.id.iconImage);
                     imageView.setImageDrawable(new BitmapDrawable(image));
-
                 }
-
             }
-
 
         });
 
-        getImage.execute();
-
-
-
-
-
+        mGetImage.execute();
 
         return view;
     }
@@ -116,10 +109,17 @@ public class HomeFragment extends Fragment {
     }
 
     static private class GetImage  extends AsyncTask<Void,Void,Bitmap> {
+
+        String username;
+
+        GetImage(String username){
+            this.username = username;
+        }
+
         private CallBackTask callbacktask;
         @Override
         protected Bitmap doInBackground(Void... voids) {
-            return GetImageInBackground.getImage();
+            return GetImageInBackground.getImage(username);
         }
 
 
