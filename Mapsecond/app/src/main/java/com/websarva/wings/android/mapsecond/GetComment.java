@@ -2,13 +2,16 @@ package com.websarva.wings.android.mapsecond;
 
 
 import android.os.AsyncTask;
+import android.util.Log;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 
 class GetComment extends AsyncTask<Void, Void, String> {
 
     private float lat;
     private float lon;
-
 
     private gcCallBackTask callbacktask;
 
@@ -32,8 +35,22 @@ class GetComment extends AsyncTask<Void, Void, String> {
 
         try{
 
+            Log.wtf("Getcomment","beforeGetcommentinbackground");
+
             gc = new GetCommentInBackGround(lat,lon,Math.abs(range));
-            return gc.postCom();
+            String result_comment = gc.postCom();
+            JSONObject json = new JSONObject(result_comment);
+            JSONArray key = json.names ();
+            for (int i = 0; i < key.length (); ++i) {
+                String keys = key.getString (i);
+                JSONObject value = json.getJSONObject(keys);
+
+
+                //you put argument value.getString(username) in getImage on Production Environment.
+            }
+
+            return result_comment;
+
 
         }catch(Exception e){
             e.printStackTrace();
@@ -47,13 +64,11 @@ class GetComment extends AsyncTask<Void, Void, String> {
         super.onPostExecute(result);
         callbacktask.gcCallBack(result);
 
-
     }
 
     void setOnCallBack(gcCallBackTask _cbj) {
         callbacktask = _cbj;
     }
-
 
     /**
      * コールバック用のstaticなclass

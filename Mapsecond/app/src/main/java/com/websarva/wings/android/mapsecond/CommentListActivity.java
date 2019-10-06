@@ -15,11 +15,10 @@ public class CommentListActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_comment_list);
 
         RecyclerView rv = findViewById(R.id.myCommentListRecyclerView);
-
-
 
         RecycleViewAdapter adapter = new RecycleViewAdapter(this.createDataSet(DisplayComment.mCluster));
 
@@ -30,7 +29,6 @@ public class CommentListActivity extends AppCompatActivity {
         rv.setLayoutManager(llm);
 
         rv.setAdapter(adapter);
-
 
     }
 
@@ -52,10 +50,11 @@ public class CommentListActivity extends AppCompatActivity {
 
             data.setUsername(p.getUsername());
 
+            data.setIcon(p.getIcon());
 
             dataset.add(data);
 
-            //get from Person set to RowData
+            //here, List of RowData is created.
         }
         return dataset;
 

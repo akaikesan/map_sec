@@ -10,9 +10,12 @@ class MyViewHolder extends RecyclerView.ViewHolder {
     TextView titleView;
     TextView favView;
     TextView userNameView;
+    CircleImageView imageView;
 
     MyViewHolder(@NonNull View itemView) {
         super(itemView);
+
+
         titleView =  itemView.findViewById(R.id.comment);
 
         favView = itemView.findViewById(R.id.fav);
@@ -20,6 +23,8 @@ class MyViewHolder extends RecyclerView.ViewHolder {
 
         userNameView = itemView.findViewById(R.id.username);
         userNameView.setTypeface(Typeface.DEFAULT_BOLD);
+
+        imageView = itemView.findViewById(R.id.iconImage);
 
     }
 }

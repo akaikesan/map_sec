@@ -1,17 +1,15 @@
 package com.websarva.wings.android.mapsecond;
 
+import android.graphics.Bitmap;
+
 class RowData {
-
-    /**
-     * Created by naoi on 2017/04/25.
-     */
-
 
     private String comment;
     private int fav;
     private String username;
+    private Bitmap image;
 
-    //been set in createDataset and gotten in RecycleViewAdapter.
+    //been set in createDataset of CommentListActivity and gotten in RecycleViewAdapter.
 
     void setUsername(String username){
         this.username = username;
@@ -38,5 +36,13 @@ class RowData {
 
     String getTitle(){
         return comment;
+    }
+
+    void setIcon(Bitmap image){
+        this.image = image;
+    }
+
+    Bitmap getImage(){
+        return image;
     }
 }

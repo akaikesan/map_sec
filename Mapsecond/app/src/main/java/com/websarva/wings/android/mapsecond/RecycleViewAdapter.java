@@ -29,7 +29,10 @@ public class RecycleViewAdapter extends RecyclerView.Adapter<MyViewHolder> {
         holder.titleView.setText(list.get(position).getTitle());
         holder.favView.setText(String.valueOf(list.get(position).getFav()));
         holder.userNameView.setText(list.get(position).getUsername());
+        holder.imageView.setImageBitmap(list.get(position).getImage());
     }
+
+    //Finally, what you want to display is displayed.
 
     @Override
     public int getItemCount() {

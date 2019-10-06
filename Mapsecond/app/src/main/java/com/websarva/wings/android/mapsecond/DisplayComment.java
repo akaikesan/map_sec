@@ -82,12 +82,15 @@ class DisplayComment implements ClusterManager.OnClusterClickListener<Person>,Cl
                             // do something with jsonObject here
 
 
+
+
                             mClusterManager.addItem(new Person(
                                     value.getDouble("latitude"),
                                     value.getDouble("longitude"),
                                     value.getString("content"),
                                     value.getString("username"),
                                     value.getInt("fav")));
+
 
                         }
 

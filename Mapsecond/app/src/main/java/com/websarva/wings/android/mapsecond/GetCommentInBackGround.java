@@ -1,5 +1,7 @@
 package com.websarva.wings.android.mapsecond;
 
+import android.util.Log;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -111,7 +113,9 @@ class GetCommentInBackGround {
                 bufferedReader.close();
                 inReader.close();
                 in.close();
+                Log.wtf("GetcommentInBackGround","Result");
 
+                System.out.println(result.toString());
 
 
                 return result.toString();

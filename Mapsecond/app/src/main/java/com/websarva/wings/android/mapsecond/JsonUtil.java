@@ -8,7 +8,6 @@ import java.util.List;
 
 class JsonUtil {
     static List<RowData> createDataSet(JSONObject jsonobj) {
-
         List<RowData> dataset = new ArrayList<>();
         //System.out.println(jsonobj);
         for (int i = 0; i < jsonobj.length()-2 ;i++) {
