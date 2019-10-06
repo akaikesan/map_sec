@@ -23,7 +23,7 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal">
 
-            <ImageView
+            <com.websarva.wings.android.mapsecond.CircleImageView
                 android:id="@+id/iconImage"
                 android:layout_width="50dp"
                 android:layout_height="50dp" />

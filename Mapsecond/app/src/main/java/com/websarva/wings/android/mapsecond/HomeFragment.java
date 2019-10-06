@@ -11,7 +11,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import org.json.JSONException;
@@ -87,8 +86,9 @@ public class HomeFragment extends Fragment {
 
 
                 if(getActivity() != null){
-                    ImageView imageView = getActivity().findViewById(R.id.iconImage);
+                    CircleImageView imageView = view.findViewById(R.id.iconImage);
                     imageView.setImageBitmap(image);
+
                 }
 
             }
