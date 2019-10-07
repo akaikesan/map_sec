@@ -1,29 +1,29 @@
 package com.websarva.wings.android.mapsecond;
 
-class GlobalValue {
+public class GlobalValue {
     private static final String SCHEME = "http";
     private static final String HOST = "localhost";
     private static final int PORT = 8000;
     private static final String PATH = "accounts";
     private static final String CRYPT = "abcdefg098765432";
 
-    static String getScheme(){
+    public static String getScheme(){
         return SCHEME;
     }
 
-    static String getHost(){
+    public static String getHost(){
         return HOST;
     }
 
-    static int getPort(){
+    public static int getPort(){
         return PORT;
     }
 
-    static String getPath(){
+    public static String getPath(){
         return PATH;
     }
 
-    static String getCryptKey(){
+    public static String getCryptKey(){
         return CRYPT;
     }
 

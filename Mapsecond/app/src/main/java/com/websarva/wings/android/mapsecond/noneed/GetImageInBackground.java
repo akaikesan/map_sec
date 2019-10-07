@@ -1,8 +1,11 @@
-package com.websarva.wings.android.mapsecond;
+package com.websarva.wings.android.mapsecond.noneed;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Log;
+
+import com.websarva.wings.android.mapsecond.GetCookiesToSet;
+import com.websarva.wings.android.mapsecond.GlobalValue;
 
 import java.io.IOException;
 import java.io.InputStream;

@@ -52,8 +52,24 @@ public class LoginActivity extends AppCompatActivity {
     @SuppressLint("GetInstance")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+
         super.onCreate(savedInstanceState);
         data = this.getSharedPreferences("DataSave", Context.MODE_PRIVATE);
+
+        View addview = getLayoutInflater().inflate(R.layout.activity_login,null);
+        TextView toRegister = addview.findViewById(R.id.registerInstruction);
+
+        toRegister.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplication(),RegisterActivity.class);
+                getApplication().startActivity(intent);
+
+            }
+        });
+
+
         is_logged_device = data.getBoolean("Is_Logged_device", false);
 
         MultiDex.install(this);

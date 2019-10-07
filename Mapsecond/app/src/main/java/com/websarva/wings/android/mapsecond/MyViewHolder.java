@@ -25,8 +25,5 @@ class MyViewHolder extends RecyclerView.ViewHolder {
         userNameView.setTypeface(Typeface.DEFAULT_BOLD);
 
         imageView = itemView.findViewById(R.id.iconImage);
-
-        String url = "http://" + GlobalValue.getHost() + ":" + GlobalValue.getPort() + "/" + GlobalValue.getPath() + "/pincomment/";
-
     }
 }

@@ -5,12 +5,12 @@ import java.util.List;
 import okhttp3.Cookie;
 import okhttp3.HttpUrl;
 
-class GetCookiesToSet {
+public class GetCookiesToSet {
 
     private String cookie_in_request = "";
 
 
-    GetCookiesToSet(String scheme, String host, int port, String path){
+    public GetCookiesToSet(String scheme, String host, int port, String path){
 
         HttpUrl httpurl = new HttpUrl.Builder().scheme(scheme).host(host).port(port).addPathSegment(path).build();
 
@@ -43,7 +43,7 @@ class GetCookiesToSet {
 
     }
 
-    String getStringCookie(){
+    public String getStringCookie(){
         return cookie_in_request;
     }
 }

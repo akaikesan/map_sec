@@ -14,7 +14,8 @@
         android:theme="@style/AppTheme"
         tools:ignore="ExtraText,GoogleAppIndexingWarning"
         tools:targetApi="n">
-        <activity android:name=".CommentListActivity"></activity>
+        <activity android:name=".RegisterActivity"></activity>
+        <activity android:name=".CommentListActivity" />
         <activity android:name=".CommentFocusActivity" />
         <activity android:name=".LoginActivity">
             <intent-filter>
@@ -43,7 +44,6 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyAFOJcECgKw0g3N-V_cQGGXEHuFvsqE5BQ" />
     </application>
-    <uses-permission android:name="android.permission.READ_CONTACTS" />
     <!--
          The ACCESS_COARSE/FINE_LOCATION permissions are not required to use
          Google Maps Android API v2, but you must specify either coarse or fine
@@ -53,7 +53,8 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
-
     <uses-permission android:name="android.permission.READ_PROFILE" />
+
+    <uses-permission android:name="android.permission.READ_CONTACTS" />
 
 </manifest>

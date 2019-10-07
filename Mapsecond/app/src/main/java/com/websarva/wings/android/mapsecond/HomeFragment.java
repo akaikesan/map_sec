@@ -1,8 +1,6 @@
 package com.websarva.wings.android.mapsecond;
 
 
-import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -14,6 +12,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -21,9 +21,6 @@ import org.json.JSONObject;
 public class HomeFragment extends Fragment {
 
     GetProfile getTask;
-
-    GetImage mGetImage;
-
     String username;
 
     @Override
@@ -35,7 +32,9 @@ public class HomeFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
+
         final View view = inflater.inflate(R.layout.fragment_home,null);
+
 
         getTask = new GetProfile();
 
@@ -53,7 +52,7 @@ public class HomeFragment extends Fragment {
                     RecyclerView rv = view.findViewById(R.id.myRecyclerView);
 
 
-                    RecycleViewAdapter adapter = new RecycleViewAdapter(JsonUtil.createDataSet(json));
+                    RecycleViewAdapter adapter = new RecycleViewAdapter(JsonUtil.createDataSet(json),getContext());
 
                     LinearLayoutManager llm = new LinearLayoutManager(getContext());
 
@@ -71,6 +70,11 @@ public class HomeFragment extends Fragment {
 
                     tv_sec.setText(introduce);
 
+                    String url = "http://" + GlobalValue.getHost() + ":" + GlobalValue.getPort() + "/" + GlobalValue.getPath() + "/image/"+ username;
+                    if(getContext() != null)  Glide.with(getContext()).load(url).into((CircleImageView) view.findViewById(R.id.iconImage));
+
+
+
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -78,24 +82,12 @@ public class HomeFragment extends Fragment {
             }
         });
 
+
+
+
+
+
         getTask.execute();
-
-        mGetImage = new GetImage(username);
-
-        mGetImage.setOnCallBack(new GetImage.CallBackTask(){
-            @Override
-            void callBack(Bitmap image){
-
-
-                if(getActivity() != null){
-                    CircleImageView imageView = view.findViewById(R.id.iconImage);
-                    imageView.setImageDrawable(new BitmapDrawable(image));
-                }
-            }
-
-        });
-
-        mGetImage.execute();
 
         return view;
     }
@@ -108,35 +100,6 @@ public class HomeFragment extends Fragment {
         super.onDestroy();
     }
 
-    static private class GetImage  extends AsyncTask<Void,Void,Bitmap> {
-
-        String username;
-
-        GetImage(String username){
-            this.username = username;
-        }
-
-        private CallBackTask callbacktask;
-        @Override
-        protected Bitmap doInBackground(Void... voids) {
-            return GetImageInBackground.getImage(username);
-        }
-
-
-        @Override
-        protected void onPostExecute(Bitmap image) {
-            callbacktask.callBack(image);
-        }
-
-        void setOnCallBack(CallBackTask cbt){
-            callbacktask = cbt;
-        }
-
-        static class CallBackTask{
-            void callBack(Bitmap image){
-            }
-        }
-    }
 
 
     static private class GetProfile extends AsyncTask<Void,Void,String> {
