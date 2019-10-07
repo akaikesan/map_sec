@@ -13,7 +13,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="ExtraText,GoogleAppIndexingWarning"
-        tools:targetApi="n">
+        tools:targetApi="n"
+        tools:overrideLibrary="com.minoon.disco">
         <activity android:name=".RegisterActivity"></activity>
         <activity android:name=".CommentListActivity" />
         <activity android:name=".CommentFocusActivity" />

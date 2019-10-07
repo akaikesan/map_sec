@@ -62,7 +62,7 @@ public class HomeFragment extends Fragment {
 
                     rv.setAdapter(adapter);
 
-                    TextView tv = view.findViewById(R.id.textView3);
+                    TextView tv = view.findViewById(R.id.HomeUsername);
 
                     tv.setText(username);
 
