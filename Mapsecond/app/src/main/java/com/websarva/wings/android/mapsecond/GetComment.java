@@ -39,6 +39,10 @@ class GetComment extends AsyncTask<Void, Void, String> {
 
             gc = new GetCommentInBackGround(lat,lon,Math.abs(range));
             String result_comment = gc.postCom();
+
+            if(result_comment == null){
+                return null;
+            }
             JSONObject json = new JSONObject(result_comment);
             JSONArray key = json.names ();
             for (int i = 0; i < key.length (); ++i) {

@@ -66,7 +66,9 @@ class DisplayComment implements ClusterManager.OnClusterClickListener<Person>,Cl
                 try {
                     if(getContext() != null){
 
-
+                        if(result == null){
+                            return;
+                        }
                         JSONObject json = new JSONObject(result);
 
                         if (json.isNull("comment0")) {

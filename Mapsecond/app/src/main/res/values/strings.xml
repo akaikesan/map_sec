@@ -7,7 +7,9 @@
     <string name="title_activity_login">Sign in</string>
     <!-- Strings related to login -->
     <string name="prompt_email">Email</string>
-    <string name="prompt_password">Password (optional)</string>
+    <string name="prompt_password">Password</string>
+    <string name="prompt_password_second">Password(for certification)</string>
+
     <string name="question_register">Click here if you have not registered</string>
     <string name="registerInstruction">Please input your new email, username and password.</string>
 

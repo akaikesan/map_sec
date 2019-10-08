@@ -42,6 +42,7 @@ import static android.content.Context.LOCATION_SERVICE;
 
 public class pinnedmapsFragment extends Fragment implements OnMapReadyCallback, LocationListener {
 
+
     private boolean pin_is_registered;
 
     private GoogleMap mMap;
@@ -49,7 +50,7 @@ public class pinnedmapsFragment extends Fragment implements OnMapReadyCallback, 
     private Marker mMarker = null;
 
 
-    double latitude = 0, longitude = 0;
+    double latitude = 400, longitude = 400;
 
     boolean GpsStatus;
 
@@ -57,6 +58,7 @@ public class pinnedmapsFragment extends Fragment implements OnMapReadyCallback, 
 
     Context contextOfFragment;
 
+    SharedPreferences data;
 
     LocationManager locationManager;
     private String TAG = "Verbose";
@@ -74,13 +76,6 @@ public class pinnedmapsFragment extends Fragment implements OnMapReadyCallback, 
         super.onCreate(savedInstanceState);
 
         contextOfFragment = getContext();
-
-        if(contextOfFragment != null) {
-            SharedPreferences data = contextOfFragment.getSharedPreferences("DataSave", Context.MODE_PRIVATE);
-
-            if(400 == data.getFloat("LAT1", 400))  pin_is_registered = false;
-        }
-
 
 
 
@@ -111,6 +106,25 @@ public class pinnedmapsFragment extends Fragment implements OnMapReadyCallback, 
 
         View view = inflater.inflate(R.layout.fragment_pinnedmaps, null);
 
+        if(contextOfFragment != null) {
+
+            data = contextOfFragment.getSharedPreferences("DataSave", Context.MODE_PRIVATE);
+
+            float f = data.getFloat("LAT1", (float) latitude);
+
+            System.out.println(f);
+
+            pin_is_registered = f != 400;
+            Log.wtf("pinnedmapsFragment","is pin registered??");
+            System.out.println(pin_is_registered);
+
+
+
+        }else{
+            Log.wtf("pinnedmapsFragment","context is null");
+
+        }
+
 
         //ここからコメントアクティビティへの遷移の流れ
         view.findViewById(R.id.nextpinbt).setOnClickListener(new View.OnClickListener() {
@@ -118,12 +132,17 @@ public class pinnedmapsFragment extends Fragment implements OnMapReadyCallback, 
             public void onClick(View view) {
 
 
+
                 if(contextOfFragment !=null) {
-                    SharedPreferences data = contextOfFragment.getSharedPreferences("DataSave", Context.MODE_PRIVATE);
+                    if(!pin_is_registered) {
+                        Toast.makeText(contextOfFragment,"PIN to the place you want to know about!",Toast.LENGTH_LONG).show();
+                        return;
+                    }
 
                     int maxofthis = data.getInt("MAXOFTHIS", 0);
 
-                    if (pinnumber < maxofthis) {//つまり、pinnumber == maxofthis == 0のときはpinnumber は０のままmaxofthisが１になるとpinnumber = 1になる。
+                    if (pinnumber < maxofthis) {
+                        //つまり、pinnumber == maxofthis == 0のときはpinnumber は０のままmaxofthisが１になるとpinnumber = 1になる。
                         pinnumber++;
                     } else if (pinnumber != 0 && pinnumber == maxofthis) {
                         pinnumber = 1;
@@ -157,6 +176,8 @@ public class pinnedmapsFragment extends Fragment implements OnMapReadyCallback, 
                     //pin current marker------------------------------------
 
                     pinMarker(sydney,pintext);
+
+
 
                     Log.wtf(TAG, "pin reloaded");
 
@@ -214,7 +235,6 @@ public class pinnedmapsFragment extends Fragment implements OnMapReadyCallback, 
 
         mMap.getUiSettings().setMapToolbarEnabled(false);
 
-        mMap.getUiSettings().setScrollGesturesEnabled(true);
         //------------------------------------------------------------------------
 
 
@@ -254,7 +274,8 @@ public class pinnedmapsFragment extends Fragment implements OnMapReadyCallback, 
                 alertDialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
 
-                        SharedPreferences data = contextOfFragment.getSharedPreferences("DataSave", Context.MODE_PRIVATE);
+                        pin_is_registered = true;
+
                         int maxofthis = data.getInt("MAXOFTHIS",0);
 
                         // OKボタン押下時の処理
@@ -424,18 +445,10 @@ public class pinnedmapsFragment extends Fragment implements OnMapReadyCallback, 
     @Override
     public void onLocationChanged(Location location) {
 
-        if(pin_is_registered) {
+        if(!pin_is_registered) {
             //If pin has never registered.
 
             if(contextOfFragment != null){
-
-
-                SharedPreferences data = contextOfFragment.getSharedPreferences("DataSave", Context.MODE_PRIVATE);
-
-
-                latitude = data.getFloat("LAT1", 400);
-                longitude = data.getFloat("LONG1", 400);
-
 
                 Log.wtf(TAG, "onLocationChanged: ");
 
@@ -443,8 +456,6 @@ public class pinnedmapsFragment extends Fragment implements OnMapReadyCallback, 
 
                 String pintxt;
 
-                sydney = new LatLng(location.getLatitude(), location.getLongitude());
-                pintxt = "Long press to PIN";
 
                 if (mMarker != null) {
                     mMarker.remove();
@@ -452,8 +463,13 @@ public class pinnedmapsFragment extends Fragment implements OnMapReadyCallback, 
                     Log.wtf(TAG, "pin removed");
                 }
 
+                sydney = new LatLng(location.getLatitude(), location.getLongitude());
+                pintxt = "Long press to PIN";
 
                 pinMarker(sydney,pintxt);
+
+
+
 
                 Log.wtf(TAG, "pin reloaded");
 
@@ -504,6 +520,8 @@ public class pinnedmapsFragment extends Fragment implements OnMapReadyCallback, 
                 .tilt(70)                   // Sets the tilt of the camera to 30 degrees
                 .build();                   // Creates a CameraPosition from the builder
         mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+        mMap.getUiSettings().setScrollGesturesEnabled(true);
+
     }
 
 

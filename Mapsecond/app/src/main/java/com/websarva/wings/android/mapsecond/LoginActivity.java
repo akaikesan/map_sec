@@ -57,17 +57,8 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         data = this.getSharedPreferences("DataSave", Context.MODE_PRIVATE);
 
-        View addview = getLayoutInflater().inflate(R.layout.activity_login,null);
-        TextView toRegister = addview.findViewById(R.id.registerInstruction);
 
-        toRegister.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getApplication(),RegisterActivity.class);
-                getApplication().startActivity(intent);
 
-            }
-        });
 
 
         is_logged_device = data.getBoolean("Is_Logged_device", false);
@@ -124,6 +115,24 @@ public class LoginActivity extends AppCompatActivity {
         }else{
 
             setContentView(R.layout.activity_login);
+
+            TextView toRegister = findViewById(R.id.registerInstruction);
+
+            toRegister.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Log.wtf("LoginActivity","registration Instruction is clicked");
+                    Intent intent = new Intent(getApplication(),RegisterActivity.class);
+                    getApplication().startActivity(intent);
+
+                }
+            });
+
+
+
+
+
+
             // Set up the login form.
             mEmailView = findViewById(R.id.email);
 
