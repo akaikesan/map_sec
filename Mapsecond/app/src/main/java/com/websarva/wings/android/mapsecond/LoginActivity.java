@@ -72,6 +72,8 @@ public class LoginActivity extends AppCompatActivity {
             String email = data.getString("EM",null);
             String pass = data.getString("PW",null);
 
+
+
             try{
 
                 cipher = Cipher.getInstance("AES");
@@ -91,7 +93,6 @@ public class LoginActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
 
-
             mAuthTask = new UserLoginTask(email, up);
             mAuthTask.setOnCallBack(new UserLoginTask.CallBackTask(){
                  @Override
@@ -100,10 +101,22 @@ public class LoginActivity extends AppCompatActivity {
                      Log.wtf("omg", "hahahahah");
 
                     try {
+                        if(result == null){
+                            Log.i("LoginActivity","");
+                        }
                         if (result) {
+                            Log.wtf("LoginActivity","login successed");
+
                             Intent intent = new Intent(getApplication(), MainActivity.class);
                             getApplication().startActivity(intent);
                         }
+                        else{
+                            Log.wtf("LoginActivity","login failed");
+                           Intent intent = new Intent(getApplication(),LoginActivity.class);
+                           getApplication().startActivity(intent);
+                           finish();
+                        }
+
                     }
                     catch (Exception e){
                         Toast.makeText(getApplicationContext(),"sorry, no response",Toast.LENGTH_SHORT).show();
@@ -141,8 +154,6 @@ public class LoginActivity extends AppCompatActivity {
             mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
                 @Override
                 public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
-
-                    //
                     if (id == EditorInfo.IME_ACTION_DONE || id == EditorInfo.IME_NULL) {
                         attemptLogin();//start!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!t
                         return true;
@@ -156,46 +167,54 @@ public class LoginActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View view) {
                     mAuthTask = attemptLogin();
+
                     assert mAuthTask != null;
                     mAuthTask.setOnCallBack(new UserLoginTask.CallBackTask(){
                         @Override
                         public void CallBack(Boolean result){
                             super.CallBack(result);
-                            Log.wtf("omg", "hahahahah");
 
-                            SharedPreferences data = getApplication().getSharedPreferences("DataSave", Context.MODE_PRIVATE);
+                            if(result) {
 
-                            try {
-                                SharedPreferences.Editor editor = data.edit();
-                                editor.putString("EM", mEmailView.getText().toString());
 
-                                SecretKeySpec keySpec = new SecretKeySpec(GlobalValue.getCryptKey().getBytes(), "AES"); // キーファイル生成
-                                Cipher cipher = Cipher.getInstance("AES");
-                                cipher.init(Cipher.ENCRYPT_MODE, keySpec);
-                                byte[] encrypted = cipher.doFinal(mPasswordView.getText().toString().getBytes()); // byte配列を暗号化
-                                String up = Base64.encodeToString(encrypted, Base64.DEFAULT); // Stringにエンコード
+                                SharedPreferences data = getApplication().getSharedPreferences("DataSave", Context.MODE_PRIVATE);
 
-                                // 入力されたログインIDとログインパスワード
-                                editor.putString("PW", up);
-                                editor.putBoolean("Is_Logged_device",true);
+                                try {
+                                    SharedPreferences.Editor editor = data.edit();
+                                    editor.putString("EM", mEmailView.getText().toString());
 
-                                // 保存
-                                editor.apply();
-                            } catch (NoSuchAlgorithmException e) {
-                                e.printStackTrace();
-                            } catch (InvalidKeyException e) {
-                                e.printStackTrace();
-                            } catch (NoSuchPaddingException e) {
-                                e.printStackTrace();
-                            } catch (BadPaddingException e) {
-                                e.printStackTrace();
-                            } catch (IllegalBlockSizeException e) {
-                                e.printStackTrace();
+                                    SecretKeySpec keySpec = new SecretKeySpec(GlobalValue.getCryptKey().getBytes(), "AES"); // キーファイル生成
+                                    Cipher cipher = Cipher.getInstance("AES");
+                                    cipher.init(Cipher.ENCRYPT_MODE, keySpec);
+                                    byte[] encrypted = cipher.doFinal(mPasswordView.getText().toString().getBytes()); // byte配列を暗号化
+                                    String up = Base64.encodeToString(encrypted, Base64.DEFAULT); // Stringにエンコード
+
+                                    // 入力されたログインIDとログインパスワード
+                                    editor.putString("PW", up);
+                                    editor.putBoolean("Is_Logged_device", true);
+
+                                    // 保存
+                                    editor.apply();
+
+                                } catch (NoSuchAlgorithmException e) {
+                                    e.printStackTrace();
+                                } catch (InvalidKeyException e) {
+                                    e.printStackTrace();
+                                } catch (NoSuchPaddingException e) {
+                                    e.printStackTrace();
+                                } catch (BadPaddingException e) {
+                                    e.printStackTrace();
+                                } catch (IllegalBlockSizeException e) {
+                                    e.printStackTrace();
+                                }
+                                Intent intent = new Intent(getApplication(),MainActivity.class);
+                                getApplication().startActivity(intent);
+
                             }
-
-                            Intent intent = new Intent(getApplication(),MainActivity.class);
-                            getApplication().startActivity(intent);
-
+                            else{
+                                mAuthTask = null;
+                                Toast.makeText(getApplication(),"Password or email address is invalid",Toast.LENGTH_LONG).show();
+                            }
 
 
                         }
@@ -220,7 +239,6 @@ public class LoginActivity extends AppCompatActivity {
         if (mAuthTask != null) {
             return null;
         }
-
         // Reset errors.
         mEmailView.setError(null);
         mPasswordView.setError(null);

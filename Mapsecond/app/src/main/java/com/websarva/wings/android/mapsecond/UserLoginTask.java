@@ -12,10 +12,6 @@ class UserLoginTask extends AsyncTask<Void, Void, Boolean> {
 
     private CallBackTask callbacktask;
 
-
-
-
-
     UserLoginTask(String email, String password) {
         mEmail = email;
         mPassword = password;
@@ -26,13 +22,13 @@ class UserLoginTask extends AsyncTask<Void, Void, Boolean> {
     @Override
     protected Boolean doInBackground(Void... params) {
 
-        SendJson sj;
+        SendLoginInfoJson sj;
 
 
         try{
             Log.wtf("omg", "hahahahah2");
 
-            sj = new SendJson(mEmail, mPassword);
+            sj = new SendLoginInfoJson(mEmail, mPassword);
 
             return sj.postPOST();
 

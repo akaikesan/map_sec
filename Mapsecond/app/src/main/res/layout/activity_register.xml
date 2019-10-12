@@ -101,4 +101,15 @@
     </android.support.design.widget.TextInputLayout>
 
 
+
+    <Button
+        android:id="@+id/register_submission"
+        style="?android:textAppearanceSmall"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="SUBMIT"
+        android:textStyle="bold" />
+
+
 </LinearLayout>

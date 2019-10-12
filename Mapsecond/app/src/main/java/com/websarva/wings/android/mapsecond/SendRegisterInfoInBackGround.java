@@ -1,5 +1,6 @@
 package com.websarva.wings.android.mapsecond;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
@@ -17,18 +18,10 @@ import java.util.Map;
 import okhttp3.Cookie;
 import okhttp3.HttpUrl;
 
-class SendJson {
+public class SendRegisterInfoInBackGround {
 
-
-    private String sendData;
-
-    SendJson(String email, String password){
-        this.sendData = String.format("{ \"email\":\"%s\",\"password\":\"%s\"}", email ,password);
-
-    }
-
-    Boolean postPOST() throws Exception {
-
+    static Boolean sendRegisterInfo(String email, String pass, String username) throws JSONException {
+        String sendData = String.format("{ \"email\":\"%s\",\"password\":\"%s\",\"username\":\"%s\"}", email ,pass,username);
         JSONObject responseJsonObject = new JSONObject(sendData);
 
         String jsonText = responseJsonObject.toString();
@@ -36,12 +29,9 @@ class SendJson {
 
         try {
             //URL url = new URL("https://mapweb.herokuapp.com/accounts/");
-            URL url = new URL(GlobalValue.getScheme() + "://"+ GlobalValue.getHost()+":"+GlobalValue.getPort()+ "/"+GlobalValue.getPath()+"/");
-
+            URL url = new URL(GlobalValue.getScheme() + "://"+ GlobalValue.getHost()+":"+GlobalValue.getPort()+ "/"+GlobalValue.getPath()+"/" + "register" + "/");
 
             //URI uri = new URI("/");
-
-
 
             HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
 
@@ -154,8 +144,4 @@ class SendJson {
         return null;
 
     }
-
-
-
-
 }
