@@ -39,6 +39,7 @@ public class RegisterActivity extends AppCompatActivity {
 
     String up;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,33 +49,21 @@ public class RegisterActivity extends AppCompatActivity {
         mPasswordView2 = findViewById(R.id.register_password2);
         mUsername = findViewById(R.id.register_username);
 
-
-
         Button mEmailSignInButton = findViewById(R.id.register_submission);
         mEmailSignInButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
-
                 if(is_verified()) {
 
                     try {
 
-                        SecretKeySpec keySpec = new SecretKeySpec(GlobalValue.getCryptKey().getBytes(), "AES"); // キーファイル生成
-                        Cipher cipher = Cipher.getInstance("AES");
-                        cipher.init(Cipher.ENCRYPT_MODE, keySpec);
-                        byte[] encrypted = cipher.doFinal(mPasswordView.getText().toString().getBytes()); // byte配列を暗号化
-                        up = Base64.encodeToString(encrypted, Base64.DEFAULT); // Stringにエンコード
-
-
-                        SecretKeySpec keySpec2 = new SecretKeySpec(GlobalValue.getCryptKey().getBytes(), "AES"); // キーファイル生成
-                        Cipher cipher2 = Cipher.getInstance("AES");
-                        cipher2.init(Cipher.ENCRYPT_MODE, keySpec2);
-                        byte[] encrypted2 = cipher2.doFinal(mPasswordView2.getText().toString().getBytes()); // byte配列を暗号化
-                        String up2 = Base64.encodeToString(encrypted2, Base64.DEFAULT);
-
-
-                        if (up.equals(up2)) {
+                        if (mPasswordView.getText().toString().equals(mPasswordView2.getText().toString())) {
+                            SecretKeySpec keySpec = new SecretKeySpec(GlobalValue.getCryptKey().getBytes(), "AES"); // キーファイル生成
+                            Cipher cipher = Cipher.getInstance("AES");
+                            cipher.init(Cipher.ENCRYPT_MODE, keySpec);
+                            byte[] encrypted = cipher.doFinal(mPasswordView.getText().toString().getBytes()); // byte配列を暗号化
+                            up = Base64.encodeToString(encrypted, Base64.DEFAULT); // Stringにエンコード
 
                             mAuthTask = new UserRegisterTask(mEmailView.getText().toString(),mPasswordView.getText().toString(),mUsername.getText().toString());
 
@@ -98,13 +87,10 @@ public class RegisterActivity extends AppCompatActivity {
                                     else{
                                         Toast.makeText(getApplication(),"sorry, Some Issue is occured.",Toast.LENGTH_SHORT).show();
                                     }
-
-
                                 }
                             });
                             mAuthTask.execute((Void) null);
                         }
-
                         // 入力されたログインIDとログインパスワード
                     } catch (NoSuchAlgorithmException e) {
                         e.printStackTrace();
@@ -117,7 +103,6 @@ public class RegisterActivity extends AppCompatActivity {
                     } catch (IllegalBlockSizeException e) {
                         e.printStackTrace();
                     }
-
                 }
             }
         });
@@ -129,8 +114,6 @@ public class RegisterActivity extends AppCompatActivity {
         // Reset errors.
         mEmailView.setError(null);
         mPasswordView.setError(null);
-
-
 
         // Store values at the time of the login attempt.
         String email = mEmailView.getText().toString();
@@ -200,6 +183,7 @@ public class RegisterActivity extends AppCompatActivity {
             }
             return null;
         }
+
         @Override
         protected void onPostExecute(Boolean result) {
             super.onPostExecute(result);
@@ -210,17 +194,9 @@ public class RegisterActivity extends AppCompatActivity {
             callBackTask = _cbj;
         }
 
-
-        /**
-         * コールバック用のstaticなclass
-         */
         static class CallBackTask {
             void CallBack(Boolean result) {
             }
         }
-
-
-
-
     }
 }

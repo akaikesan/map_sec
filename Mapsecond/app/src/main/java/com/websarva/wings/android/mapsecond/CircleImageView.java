@@ -297,6 +297,9 @@ public class CircleImageView extends android.support.v7.widget.AppCompatImageVie
         return distance <= (mBitmapDrawBounds.width() / 2);
     }
 
+    public void setOnClickListener() {
+    }
+
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     public class CircleImageViewOutlineProvider extends ViewOutlineProvider {

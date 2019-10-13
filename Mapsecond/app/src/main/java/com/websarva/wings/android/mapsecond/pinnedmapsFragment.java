@@ -175,7 +175,7 @@ public class pinnedmapsFragment extends Fragment implements OnMapReadyCallback, 
 
                     //pin current marker------------------------------------
 
-                    pinMarker(sydney,pintext);
+                    pinMarker(sydney,pintext,contextOfFragment);
 
 
 
@@ -466,7 +466,7 @@ public class pinnedmapsFragment extends Fragment implements OnMapReadyCallback, 
                 sydney = new LatLng(location.getLatitude(), location.getLongitude());
                 pintxt = "Long press to PIN";
 
-                pinMarker(sydney,pintxt);
+                pinMarker(sydney,pintxt,contextOfFragment);
 
 
 
@@ -504,8 +504,8 @@ public class pinnedmapsFragment extends Fragment implements OnMapReadyCallback, 
     }
 
 
-    private void pinMarker(LatLng sydney,String pintext){
-        IconGenerator iconFactory = new IconGenerator(getContext());
+    private void pinMarker(LatLng sydney,String pintext,Context context){
+        IconGenerator iconFactory = new IconGenerator(context);
 
         MarkerOptions markerOptions = new MarkerOptions()
                 .icon(BitmapDescriptorFactory.fromBitmap(iconFactory.makeIcon(pintext)))

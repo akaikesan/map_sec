@@ -1,5 +1,9 @@
 package com.websarva.wings.android.mapsecond;
 
+import android.graphics.Bitmap;
+import android.util.Base64;
+
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
@@ -9,31 +13,25 @@ import java.net.ProtocolException;
 import java.net.URL;
 import java.util.Locale;
 
-class SendCommentBackGround {
+class SendBitmapInBackGround {
 
-    private String sendData;
+    private String str_image;
 
-
-    SendCommentBackGround(String comment, double latitude,double longitude) {
-
-        this.sendData = String.format("{ \"content\":\"%s\",\"latitude\":\"" + latitude + "\",\"longitude\":\"" + longitude + "\"}", comment);
-
+    SendBitmapInBackGround(Bitmap image){
+        str_image = encodeTobase64(image);
     }
 
-
-
-
-
-    boolean postPOST() {
-
-
-        String json = sendData;
+    Boolean send_bm(){
 
 
         try {
-            URL url = new URL("http://localhost:8000/accounts/comment/");
 
 
+
+
+            String jsonStr = String.format("{ \"content\":\"%s\"}", str_image);
+
+            URL url = new URL("http://localhost:8000/accounts/image/");
 
             HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
 
@@ -70,24 +68,14 @@ class SendCommentBackGround {
 
             PrintStream ps = new PrintStream(outputStream);
 
-            ps.print(json);
-
-
-
+            ps.print(jsonStr);
 
 
             ps.close();
+
             int statusCode = urlConnection.getResponseCode();
 
-            if (statusCode == HttpURLConnection.HTTP_OK) {
-
-
-                return true;
-
-            }
-            if (statusCode == HttpURLConnection.HTTP_UNAUTHORIZED) {
-                return false;
-            }
+            return statusCode == HttpURLConnection.HTTP_OK;
 
         } catch (ProtocolException e) {
             e.printStackTrace();
@@ -100,4 +88,14 @@ class SendCommentBackGround {
         return false;
 
     }
+
+
+    private static String encodeTobase64(Bitmap image)
+    {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        image.compress(Bitmap.CompressFormat.PNG, 100, baos);
+        byte[] b = baos.toByteArray();
+        return Base64.encodeToString(b,Base64.DEFAULT);
+    }
+
 }
