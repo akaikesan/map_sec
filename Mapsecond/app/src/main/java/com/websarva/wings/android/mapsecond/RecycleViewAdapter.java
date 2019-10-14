@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.signature.ObjectKey;
 
 import java.util.List;
 
@@ -16,10 +17,6 @@ public class RecycleViewAdapter extends RecyclerView.Adapter<MyViewHolder> {
     private List<RowData> list;
 
     private Context context = null;
-
-    RecycleViewAdapter(List<RowData> list){
-        this.list = list;
-    }
 
     RecycleViewAdapter(List<RowData> list, Context context){
 
@@ -41,7 +38,7 @@ public class RecycleViewAdapter extends RecyclerView.Adapter<MyViewHolder> {
         holder.favView.setText(String.valueOf(list.get(position).getFav()));
         holder.userNameView.setText(list.get(position).getUsername());
         String url = "http://" + GlobalValue.getHost() + ":" + GlobalValue.getPort() + "/" + GlobalValue.getPath() + "/image/"+list.get(position).getUsername();
-        if(context != null)  Glide.with(context).load(url).into(holder.imageView);
+        if(context != null)  Glide.with(context).load(url).signature(new ObjectKey(System.currentTimeMillis())).into(holder.imageView);
     }
 
     //Finally, what you want to display is displayed.

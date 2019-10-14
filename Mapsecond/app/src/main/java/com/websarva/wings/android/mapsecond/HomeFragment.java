@@ -36,8 +36,7 @@ public class HomeFragment extends Fragment {
     GetProfile getTask;
     String username;
     final private int GALLERY_REQUEST_CODE = 1;
-
-    private Bitmap FileToSend;
+    CircleImageView circleImage;
 
 
     @Override
@@ -87,7 +86,7 @@ public class HomeFragment extends Fragment {
 
                     String url = "http://" + GlobalValue.getHost() + ":" + GlobalValue.getPort() + "/" + GlobalValue.getPath() + "/image/"+ username;
 
-                    CircleImageView circleImage = view.findViewById(R.id.iconImage);
+                    circleImage = view.findViewById(R.id.iconImage);
 
                     circleImage.setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -174,22 +173,50 @@ public class HomeFragment extends Fragment {
 
                         cursor.close();
 
-                        FileToSend = BitmapFactory.decodeFile(imgDecodableString);
+                        Bitmap fileToSend = resizeBitmap(BitmapFactory.decodeFile(imgDecodableString));
 
-                        if(FileToSend == null){
+
+                        if(fileToSend == null){
                             Log.wtf("Homefragment","file is null");
                             return;
                         }
 
 
-                        SendBitmap sendBMTask = new SendBitmap(FileToSend);
+                        SendBitmap sendBMTask = new SendBitmap(fileToSend);
                         Log.wtf("Home Fragment","Image sent");
                         sendBMTask.execute();
-                        Glide glide = Glide.get(getContext());
-                        glide.clearMemory();
+
                     }
                     break;
             }
+
+    }
+
+    public Bitmap resizeBitmap(Bitmap beforeResizeBitmap){
+
+
+            // リサイズ前のBitmap
+            // リサイズ比
+            double resizeScale;
+            // 横長画像の場合
+            if (beforeResizeBitmap.getWidth() >= beforeResizeBitmap.getHeight()) {
+                resizeScale = (double) circleImage.getWidth() / beforeResizeBitmap.getWidth();
+            }
+            // 縦長画像の場合
+            else {
+                resizeScale = (double) circleImage.getHeight() / beforeResizeBitmap.getHeight();
+            }
+            // リサイズ
+
+            Bitmap scaledBitmap;
+            scaledBitmap = Bitmap.createScaledBitmap(beforeResizeBitmap,
+                    (int) (beforeResizeBitmap.getWidth() * resizeScale),
+                    (int) (beforeResizeBitmap.getHeight() * resizeScale),
+                    true);
+            return scaledBitmap;
+
+
+
 
     }
 

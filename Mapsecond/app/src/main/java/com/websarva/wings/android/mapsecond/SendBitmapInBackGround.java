@@ -16,10 +16,10 @@ import java.util.Locale;
 class SendBitmapInBackGround {
 
     private String str_image;
-
     SendBitmapInBackGround(Bitmap image){
         str_image = encodeTobase64(image);
     }
+
 
     Boolean send_bm(){
 
