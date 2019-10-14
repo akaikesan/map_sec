@@ -1,5 +1,6 @@
 package com.websarva.wings.android.mapsecond;
 
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
@@ -20,6 +21,7 @@ class MyViewHolder extends RecyclerView.ViewHolder {
 
         favView = itemView.findViewById(R.id.fav);
         favView.setTypeface(Typeface.MONOSPACE);
+        favView.setTextColor(Color.GRAY);
 
         userNameView = itemView.findViewById(R.id.username);
         userNameView.setTypeface(Typeface.DEFAULT_BOLD);

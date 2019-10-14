@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -65,7 +66,6 @@ public class HomeFragment extends Fragment {
 
                     RecyclerView rv = view.findViewById(R.id.myRecyclerView);
 
-
                     RecycleViewAdapter adapter = new RecycleViewAdapter(JsonUtil.createDataSet(json),getContext());
 
                     LinearLayoutManager llm = new LinearLayoutManager(getContext());
@@ -82,7 +82,13 @@ public class HomeFragment extends Fragment {
 
                     TextView tv_sec = view.findViewById(R.id.textView);
 
-                    tv_sec.setText(introduce);
+                    if(introduce.equals("")){
+                        tv_sec.setText(introduce);
+                    }
+                    else{
+                        tv_sec.setText("self Introduce has not been posted");
+                        tv_sec.setTextColor(Color.GRAY);
+                    }
 
                     String url = "http://" + GlobalValue.getHost() + ":" + GlobalValue.getPort() + "/" + GlobalValue.getPath() + "/image/"+ username;
 
