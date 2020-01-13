@@ -1,15 +1,16 @@
 package com.websarva.wings.android.mapsecond;
 
 
-
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.FragmentActivity;
 import android.view.View;
+import android.view.Window;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.TextView;
 
 
 public class CommentActivity extends FragmentActivity implements View.OnClickListener{
@@ -19,6 +20,11 @@ public class CommentActivity extends FragmentActivity implements View.OnClickLis
 
 
 
+    TextView kbd_h;
+
+    Window mRootWindow;
+
+    int bottom;
 
 
     @Override
@@ -31,8 +37,22 @@ public class CommentActivity extends FragmentActivity implements View.OnClickLis
         // 戻るボタンにリスナを登録
         findViewById(R.id.btCancel).setOnClickListener(this);
         findViewById(R.id.btContribution).setOnClickListener(this);
+       /* kbd_h = findViewById(R.id.kbd_height);
+        final RelativeLayout ll_main =  findViewById(R.id.Root_Rl);
 
-
+        mRootWindow = getWindow();
+        View mRootView = mRootWindow.getDecorView().findViewById(android.R.id.content);
+        mRootView.getViewTreeObserver().addOnGlobalLayoutListener(
+                new ViewTreeObserver.OnGlobalLayoutListener() {
+                    public void onGlobalLayout(){
+                        Rect r = new Rect();
+                        View view = mRootWindow.getDecorView();
+                        view.getWindowVisibleDisplayFrame(r);
+                        // r.left, r.top, r.right, r.bottom
+                        Log.wtf("CommentActivity","layout");
+                        bottom = r.bottom;
+                    }
+                });*/
 
     }
 
@@ -87,24 +107,14 @@ public class CommentActivity extends FragmentActivity implements View.OnClickLis
                     mTask.setSendCommentCallBack(new SendComment.sendCommentCallBack(){
                         @Override
                         public void CallBack(Boolean result){
-
                             if(result){
                                 finish();
                             }
-
                         }
                     });
                     mTask.execute((Void) null);
-
                     break;
-
-
-
-
-
-
             }
         }
     }
-
 }

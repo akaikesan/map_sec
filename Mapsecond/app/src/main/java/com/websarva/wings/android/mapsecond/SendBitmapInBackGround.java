@@ -37,8 +37,6 @@ class SendBitmapInBackGround {
 
             urlConnection.setRequestMethod("POST");
 
-
-
             urlConnection.setConnectTimeout(100000);
             //レスポンスデータ読み取りタイムアウトを設定する。
             urlConnection.setReadTimeout(100000);

@@ -16,7 +16,7 @@ public class RecycleViewAdapter extends RecyclerView.Adapter<MyViewHolder> {
 
     private List<RowData> list;
 
-    private Context context = null;
+    private Context context;
 
     RecycleViewAdapter(List<RowData> list, Context context){
 
